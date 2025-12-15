@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+{% load static %}
+{% load socialaccount %}
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>{{ company.app_name | capfirst }} - {% block title %} {% endblock %}</title>
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Bootstrap icons-->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <!-- Google fonts-->
+        <link rel="preconnect" href="https://fonts.gstatic.com" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+        <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,600;1,600&amp;display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,300;0,500;0,600;0,700;1,300;1,500;1,600;1,700&amp;display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,400;1,400&amp;display=swap" rel="stylesheet" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+       <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top shadow-sm" id="mainNav">
+            <div class="container px-5">
+                <!-- Brand -->
+                <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'home' %}">
+                    {% if company.logo %}
+                        <img src="{{ company.logo.url }}" alt="{{ company.company_name }}" 
+                            style="height:30px; width:auto; object-fit:contain;">
+                            <span class="fw-bold">{{ company.app_name }}</span>
+                    {% else %}
+                        <!-- fallback text if no logo -->
+                        <span class="fw-bold">{{ company.app_name }}</span>
+                    {% endif %}
+                </a>
+
+
+                <!-- Toggler -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" 
+                        aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="me-2">Menu</span>
+                    <i class="bi-list"></i>
+                </button>
+
+                <!-- Navbar links -->
+                <div class="collapse navbar-collapse" id="navbarResponsive">
+                    <ul class="navbar-nav ms-auto me-4 my-3 my-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link me-lg-3" href="{% url 'service_pricing' %}">Service Pricing</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link me-lg-3" href="#download">Download</a>
+                        </li>
+                    </ul>
+
+                    <!-- Buttons -->
+                    <div class="d-flex gap-2 align-items-center">
+
+                        <!-- Feedback Button (always visible) -->
+                        <button class="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+                            <span class="d-flex align-items-center">
+                                <i class="bi-chat-text-fill me-2"></i>
+                                <span class="small">Send Feedback</span>
+                            </span>
+                        </button>
+
+                        {% if user.is_authenticated %}
+                            <!-- User Info Button -->
+                            <button class="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0 d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+                                {% if user.profile.pr_pic %}
+                                    <img src="{{ user.profile.pr_pic.url }}" alt="Profile" class="rounded-circle me-2" width="25" height="25" style="object-fit: cover; border:1px solid white; padding:2px;">
+                                {% else %}
+                                    <i class="bi-person-circle me-2"></i>
+                                {% endif %}
+                                <span class="small">{{ user.profile.full_name|default:user.username }}</span>
+                            </button>
+
+                            <!-- Logout Button -->
+                            <form method="post" action="{% url 'logout' %}" class="mb-0">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger rounded-pill px-3 mb-2 mb-lg-0">
+                                    <span class="d-flex align-items-center">
+                                        <i class="bi-box-arrow-right me-2"></i>
+                                        <span class="small">Logout</span>
+                                    </span>
+                                </button>
+                            </form>
+                        {% else %}
+                            <!-- Sign In / Sign Up Button -->
+                            <button class="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#signInModal">
+                                <span class="d-flex align-items-center">
+                                    <i class="bi-person-circle me-2"></i>
+                                    <span class="small">Sign In & Sign Up</span>
+                                </span>
+                            </button>
+                        {% endif %}
+
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+
+
+        {% block  Main_content %}
+        
+        
+        
+        
+        
+        {% endblock %}
+
+
+        <!-- Footer -->
+        <footer class="bg-black text-center py-4 text-white">
+            <div class="container px-4">
+
+                
+                <!-- App Download Badges Inline (Small) -->
+                <div class="d-flex justify-content-center gap-1 flex-wrap mb-2">
+                    {% if company.android_app_link %}
+                    <a href="{{ company.android_app_link }}" target="_blank">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" 
+                            alt="Google Play" style="height:35px;">
+                    </a>
+                    {% endif %}
+                    
+                    {% if company.ios_app_link %}
+                    <a href="{{ company.ios_app_link }}" target="_blank">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/6/67/Download_on_the_App_Store_Badge.svg" 
+                            alt="App Store" style="height:35px;">
+                    </a>
+                    {% endif %}
+                    
+                    {% if company.desktop_app_link %}
+                    <a href="{{ company.desktop_app_link }}" target="_blank">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Windows_Store_badge.svg" 
+                            alt="Desktop App" style="height:35px;">
+                    </a>
+                    {% endif %}
+                </div>
+
+                <!-- Footer Links (Small) -->
+                <div class="mb-1" style="font-size:0.8rem; font-weight:bold;">
+                    <a href="#!" class="text-white text-decoration-none me-1">Privacy</a>
+                    <span class="mx-1">&middot;</span>
+                    <a href="#!" class="text-white text-decoration-none mx-1">Terms</a>
+                    <span class="mx-1">&middot;</span>
+                    <a href="#!" class="text-white text-decoration-none ms-1">FAQ</a>
+                </div>
+
+                <!-- Copyright (Small) -->
+                <div style="font-size:0.8rem; font-weight:bold;">
+                    &copy; {{ company.company_name }} {% now 'Y' %} All Rights Reserved.
+                </div>
+
+
+                <!-- Company Info Inline (Small) -->
+                <div class="d-flex flex-wrap justify-content-center align-items-center gap-3 mt-2" style="font-size:0.8rem;">
+                    {% if company.address %}
+                    <span class="d-flex align-items-center">
+                        <i class="fas fa-map-marker-alt me-1 fs-6"></i>{{ company.address }}
+                    </span>
+                    {% endif %}
+                    
+                    {% if company.email %}
+                    <span class="d-flex align-items-center">
+                        <i class="fas fa-envelope me-1 fs-6"></i>
+                        <a href="mailto:{{ company.email }}" class="text-white text-decoration-none">{{ company.email }}</a>
+                    </span>
+                    {% endif %}
+                    
+                    {% if company.phone %}
+                    <span class="d-flex align-items-center">
+                        <i class="fas fa-phone me-1 fs-6"></i>
+                        <a href="tel:{{ company.phone }}" class="text-white text-decoration-none">{{ company.phone }}</a>
+                    </span>
+                    {% endif %}
+                    
+                    {% if company.website %}
+                    <span class="d-flex align-items-center">
+                        <i class="fas fa-globe me-1 fs-6"></i>
+                        <a href="{{ company.website }}" target="_blank" class="text-white text-decoration-none">{{ company.website }}</a>
+                    </span>
+                    {% endif %}
+                </div>
+
+
+            </div>
+
+            <!-- Floating Social Buttons (Smaller) -->
+            {% if company.linkedin_link %}
+            <a href="{{ company.linkedin_link }}" target="_blank"
+            class="position-fixed shadow rounded-circle d-flex align-items-center justify-content-center"
+            style="width:45px; height:45px; background-color:#0A66C2; bottom:90px; right:20px; z-index:1050;">
+                <i class="fab fa-linkedin-in text-white fs-4"></i>
+            </a>
+            {% endif %}
+
+            {% if company.whatsapp_number %}
+            <a href="https://wa.me/{{ company.whatsapp_number }}" target="_blank"
+            class="position-fixed shadow rounded-circle d-flex align-items-center justify-content-center"
+            style="width:45px; height:45px; background-color:#25D366; bottom:20px; right:20px; z-index:1050;">
+                <i class="fab fa-whatsapp text-white fs-4"></i>
+            </a>
+            {% endif %}
+        </footer>
+
+
+
+
+
+        <!-- Sign In & Sign Up Modal -->
+        <div class="modal fade" id="signInModal" tabindex="-1" aria-labelledby="signInModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-gradient-primary-to-secondary p-4">
+                        <h5 class="modal-title font-alt text-white" id="signInModalLabel">Welcome</h5>
+                        <button class="btn-close btn-close-white" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body border-0 p-4">
+                        <!-- Tabs for Sign In / Sign Up -->
+                        <ul class="nav nav-tabs mb-3" id="authTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="signin-tab" data-bs-toggle="tab" data-bs-target="#signin" type="button" role="tab" aria-controls="signin" aria-selected="true">Sign In</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="signup-tab" data-bs-toggle="tab" data-bs-target="#signup" type="button" role="tab" aria-controls="signup" aria-selected="false">Sign Up</button>
+                            </li>
+                        </ul>
+
+                        <div class="tab-content" id="authTabsContent">
+                            <!-- Sign In Form -->
+                            <div class="tab-pane fade show active" id="signin" role="tabpanel" aria-labelledby="signin-tab">
+                                <form id="signinForm" method="post" action="{% url 'account_login' %}">
+                                    {% csrf_token %}
+                                    <div class="form-floating mb-3">
+                                        <input type="email" name="login" class="form-control" id="signinEmail" placeholder="Email" required>
+                                        <label for="signinEmail">Email</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="password" name="password" class="form-control" id="signinPassword" placeholder="Password" required>
+                                        <label for="signinPassword">Password</label>
+                                    </div>
+                                    <div class="d-grid mb-2">
+                                        <button type="submit" class="btn btn-primary rounded-pill btn-lg">Sign In</button>
+                                    </div>
+
+                                    <!-- Google Sign In -->
+                                    <div class="mb-3">
+                                        <a href="{% provider_login_url 'google' %}?process=login" class="btn btn-danger w-100 rounded-pill">
+                                            <i class="bi bi-google me-2"></i> Sign In with Google
+                                        </a>
+                                    </div>
+                                </form>
+                            </div>
+
+
+                            <!-- Sign Up Form -->
+                            <div class="tab-pane fade" id="signup" role="tabpanel" aria-labelledby="signup-tab">
+                                <form id="signupForm">
+                                    <div class="form-floating mb-3">
+                                        <input type="text" class="form-control" id="signupName" placeholder="Full Name" required>
+                                        <label for="signupName">Full Name</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="email" class="form-control" id="signupEmail" placeholder="Email" required>
+                                        <label for="signupEmail">Email</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="password" class="form-control" id="signupPassword" placeholder="Password" required>
+                                        <label for="signupPassword">Password</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input type="password" class="form-control" id="signupConfirmPassword" placeholder="Confirm Password" required>
+                                        <label for="signupConfirmPassword">Confirm Password</label>
+                                    </div>
+                                    <div class="d-grid mb-2">
+                                        <button type="submit" class="btn btn-success rounded-pill btn-lg">Sign Up</button>
+                                    </div>
+                                   <div class="mb-3">
+                                        <a href="{% provider_login_url 'google' %}?process=signup" class="btn btn-danger w-100 rounded-pill">
+                                            <i class="bi bi-google me-2"></i> Sign Up with Google
+                                        </a>
+                                    </div>                   
+                                </form>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Feedback Modal-->
+        <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-gradient-primary-to-secondary p-4">
+                        <h5 class="modal-title font-alt text-white" id="feedbackModalLabel">Send feedback</h5>
+                        <button class="btn-close btn-close-white" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body border-0 p-4">
+                      
+                        <!-- to get an API token!-->
+                        <form id="contactForm" data-sb-form-api-token="API_TOKEN">
+                            <!-- Name input-->
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="name" type="text" placeholder="Enter your name..." data-sb-validations="required" />
+                                <label for="name">Full name</label>
+                                <div class="invalid-feedback" data-sb-feedback="name:required">A name is required.</div>
+                            </div>
+                            <!-- Email address input-->
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="email" type="email" placeholder="name@example.com" data-sb-validations="required,email" />
+                                <label for="email">Email address</label>
+                                <div class="invalid-feedback" data-sb-feedback="email:required">An email is required.</div>
+                                <div class="invalid-feedback" data-sb-feedback="email:email">Email is not valid.</div>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <input class="form-control" id="phone" type="tel" placeholder="(123) 456-7890" data-sb-validations="required" />
+                                <label for="phone">Phone number</label>
+                                <div class="invalid-feedback" data-sb-feedback="phone:required">A phone number is required.</div>
+                            </div>
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" id="message" type="text" placeholder="Enter your message here..." style="height: 10rem" data-sb-validations="required"></textarea>
+                                <label for="message">Message</label>
+                                <div class="invalid-feedback" data-sb-feedback="message:required">A message is required.</div>
+                            </div>
+                            <div class="d-none" id="submitSuccessMessage">
+                                <div class="text-center mb-3">
+                                    <div class="fw-bolder">Form submission successful!</div>
+                                    To activate this form, sign up at
+                                    <br />
+                                    <a href="https://startbootstrap.com/solution/contact-forms">https://startbootstrap.com/solution/contact-forms</a>
+                                </div>
+                            </div>
+                            <div class="d-none" id="submitErrorMessage"><div class="text-center text-danger mb-3">Error sending message!</div></div>
+                            <div class="d-grid"><button class="btn btn-primary rounded-pill btn-lg disabled" id="submitButton" type="submit">Submit</button></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="{% static "js/scripts.js" %}"></script>
+        <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+    </body>
+</html>

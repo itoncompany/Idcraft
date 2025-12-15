@@ -1,0 +1,216 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block title %}Home{% endblock %}
+{% block Main_content %}
+        <!-- Mashead header-->
+        <header class="masthead">
+            <div class="container px-5">
+                <div class="row gx-5 align-items-center">
+                   <div class="col-lg-6">
+                        <div class="mb-5 mb-lg-0 text-center text-lg-start">
+                            
+                            <!-- Headline -->
+                            <h1 class="display-4 fw-bold mb-4" style="font-family: 'Poppins', sans-serif; line-height: 1.2;">
+                            <span style="color: #383838ff;font-weight:bolder;font-size: 5.5rem;font-family: 'Poppins', sans-serif;">{{company.app_name | capfirst}}</span> – छिटो र सजिलो ID कार्ड
+                            </h1>
+
+                            <!-- Description -->
+                            <p class="lead text-muted mb-5" style="font-family: 'Lato', sans-serif; font-size: 1.125rem;">
+                            विद्यालय, कलेज वा अफिसका लागि भरपर्दो र छिटो सेवा।<br>
+                            IDcraft ले तपाईंको ID कार्ड बनाउने काम सरल र प्रभावकारी बनाउँछ। आजै प्रयोग गर्नुहोस्!
+                            </p>
+
+                           <!-- Call to Action Buttons -->
+                            <div class="d-flex flex-column flex-sm-row align-items-center gap-3">
+                            <div id="download-app-container" class="text-center" style="border:none;">
+                                <!-- Buttons will be inserted here dynamically -->
+                            </div>
+
+                            <a href="#demo" class="btn btn-outline-primary btn-lg d-inline-block">
+                                Demo
+                            </a>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+
+                    <div class="col-lg-6">
+                        <!-- Masthead device mockup feature-->
+                        <div class="masthead-device-mockup">
+                            <!-- Circle with gradient -->
+                        <svg class="circle" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="circleGradient" gradientTransform="rotate(45)">
+                                    <stop offset="0%"  stop-color="#2574fc11"/>
+                                    <stop offset="100%" stop-color="#6b11cb57"/>
+                                </linearGradient>
+                            </defs>
+                            <circle cx="50" cy="50" r="50" fill="url(#circleGradient)"></circle>
+                        </svg>
+
+                        <!-- Shape 1 -->
+                        <svg class="shape-1 d-none d-sm-block" viewBox="0 0 240.83 240.83" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="-32.54" y="78.39" width="305.92" height="84.05" rx="42.03"
+                                  transform="translate(120.42 -49.88) rotate(45)" fill="#ff7e5f"></rect>
+                            <rect x="-32.54" y="78.39" width="305.92" height="84.05" rx="42.03"
+                                  transform="translate(-49.88 120.42) rotate(-45)" fill="#feb47b"></rect>
+                        </svg>
+
+                        <!-- Shape 2 with gradient -->
+                        <svg class="shape-2 d-none d-sm-block" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <defs>
+                                <linearGradient id="shape2Gradient" gradientTransform="rotate(45)">
+                                    <stop offset="0%" stop-color="#6a11cb"/>
+                                    <stop offset="100%" stop-color="#2575fc"/>
+                                </linearGradient>
+                            </defs>
+                            <circle cx="50" cy="50" r="50" fill="url(#shape2Gradient)"></circle>
+                        </svg>
+
+                            <div class="device-wrapper">
+                                <div class="device" data-device="iPhoneX" data-orientation="portrait" data-color="black">
+                                    <div class="screen bg-black">
+                                        <!-- Video covers the full screen -->
+                                        <video muted autoplay loop playsinline
+                                            style="width: 100%; height: 100%; object-fit: cover;">
+                                            <source src="{% static 'videos/card.mp4' %}" type="video/mp4" />
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Reviews Section -->
+        <section id="reviews" style="padding: 4rem 0; background-color: #e0e0e0ff;">
+          <div class="container">
+            <h2 class="text-center mb-5" style="font-family: 'Arial', sans-serif;">Reviews from Our Clients</h2>
+            <div class="reviews-grid">
+
+              <!-- Single Review Card -->
+              <div class="review-card">
+                <div class="review-header">
+                  <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="User" class="profile-pic">
+                  <div class="user-info">
+                    <span class="username">John Doe <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
+                          <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708"/>
+                        </svg>
+                    </span>
+                    <div class="verified-stars">
+                      <span class="verified">Verified</span>
+                      <span class="stars">★★★★☆</span>
+                    </div>
+                  </div>
+                </div>
+                <hr style="margin:8px 0;width:100%">
+                <p class="comment">Great service! Really satisfied with the experience. Highly recommended to others.</p>
+              </div>
+
+              <div class="review-card">
+                <div class="review-header">
+                  <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="User" class="profile-pic">
+                  <div class="user-info">
+                    <span class="username">Jane Smith  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
+                        <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708"/>
+                      </svg>
+                    </span>
+                    <div class="verified-stars">
+                      <span class="verified">Verified</span>
+                      <span class="stars">★★★★★</span>
+                    </div>
+                  </div>
+                </div>
+                <hr style="margin:8px 0;width:100%">
+                <p class="comment">Amazing! The support team was very helpful and the interface is super modern.</p>
+              </div>
+              
+
+              <div class="review-card">
+                <div class="review-header">
+                  <img src="https://randomuser.me/api/portraits/men/65.jpg" alt="User" class="profile-pic">
+                  <div class="user-info">
+                    <span class="username">Michael Lee <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
+                      <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708"/>
+                    </svg>
+                    </span>
+                    <div class="verified-stars">
+                      <span class="verified">Verified</span>
+                      <span class="stars">★★★☆☆</span>
+                    </div>
+                  </div>
+                </div>
+                <hr style="margin:8px 0;width:100%">
+                <p class="comment">Good overall, but there is room for improvement in certain areas.</p>
+              </div>
+
+              <div class="review-card">
+                <div class="review-header">
+                  <img src="https://randomuser.me/api/portraits/women/55.jpg" alt="User" class="profile-pic">
+                  <div class="user-info">
+                    <span class="username">Sarah Connor  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
+                        <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708"/>
+                      </svg>
+                    </span>
+                    <div class="verified-stars">
+                      <span class="verified">Verified</span>
+                      <span class="stars">★★★★★</span>
+                    </div>
+                  </div>
+                  
+                </div>
+                <hr style="margin:8px 0;width:100%">
+                <p class="comment" style="text-align:justify;">Excellent platform, very easy to use, and the support is fantastic!</p>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+
+
+
+        <section id="trusted-schools" class="py-2 bg-light">
+          <div class="container text-center">
+            <h2 class="text-dark font-alt mb-2" style="font-size:1rem;">Our Trusted Schools</h2>
+
+            <div class="marquee-wrapper position-relative" style="height:30px;">
+              <div class="marquee">
+                <div class="marquee-track">
+                  <span class="school-name">WhiteCrane English Boarding</span>
+                  <span class="school-name">Emrald Academy School</span>
+                  <span class="school-name">Bhupu Sainik School</span>
+                  <span class="school-name">Birgunj Technical School</span>
+                  <span class="school-name">Jeetpur English Public School</span>
+                  <span class="school-name">Evergreen Boarding School</span>
+                  <span class="school-name">Modern Secondary School</span>
+                  <span class="school-name">Kathmandu University</span>
+                  <span class="school-name">Tribhuvan University</span>
+                  <span class="school-name">Apex College</span>
+                  <span class="school-name">National College</span>
+                  <!-- Duplicate for seamless scroll -->
+                  <span class="school-name">WhiteCrane English Boarding</span>
+                  <span class="school-name">Emrald Academy School</span>
+                  <span class="school-name">Bhupu Sainik School</span>
+                  <span class="school-name">Birgunj Technical School</span>
+                  <span class="school-name">Jeetpur English Public School</span>
+                  <span class="school-name">Evergreen Boarding School</span>
+                  <span class="school-name">Modern Secondary School</span>
+                  <span class="school-name">Kathmandu University</span>
+                  <span class="school-name">Tribhuvan University</span>
+                  <span class="school-name">Apex College</span>
+                  <span class="school-name">National College</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+
+        {% endblock %}
