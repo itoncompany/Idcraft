@@ -4,6 +4,7 @@ from django.templatetags.static import static
 from django.core.files.base import ContentFile
 from django.dispatch import receiver
 from django.contrib import messages
+from django.shortcuts import redirect
 from allauth.account.signals import user_signed_up
 from allauth.socialaccount.signals import social_account_added, social_account_updated
 from django.contrib.auth.signals import user_logged_in
@@ -168,6 +169,9 @@ class Profile(models.Model):
     def get_contact_info(self):
         return f"Email: {self.user.email}, Phone: {self.ph_num or 'N/A'}"
 
+    def get_full_name(self):
+        return self.full_name or self.user.get_full_name() or self.user.username
+
     def get_profile_picture_url(self):
         if self.pr_pic:
             return self.pr_pic.url
@@ -182,33 +186,19 @@ class Profile(models.Model):
 
 
 
-
 def create_or_update_profile(user, socialaccount=None, request=None):
-    """
-    Create or update a Profile object for the given user.
-
-    - If `socialaccount` is provided, extract full_name, profile picture, and email from it.
-    - Avoid overwriting existing profile data unnecessarily.
-    - Optionally, send success messages via Django messages framework.
-    """
     profile, created = Profile.objects.get_or_create(user=user)
     updated = False
 
     if socialaccount:
         extra_data = socialaccount.extra_data
 
-        # Full name from social account
         full_name = extra_data.get("name") or extra_data.get("full_name")
         if full_name and full_name != profile.full_name:
             profile.full_name = full_name
             updated = True
 
-        # Profile picture from social account
-        profile_pic_url = (
-            extra_data.get("picture")
-            or extra_data.get("profile_picture")
-            or extra_data.get("avatar_url")
-        )
+        profile_pic_url = extra_data.get("picture") or extra_data.get("profile_picture") or extra_data.get("avatar_url")
         if profile_pic_url and not profile.pr_pic:
             try:
                 response = requests.get(profile_pic_url)
@@ -219,7 +209,6 @@ def create_or_update_profile(user, socialaccount=None, request=None):
             except Exception as e:
                 print(f"Failed to download profile picture: {e}")
 
-        # Update user email if empty
         if extra_data.get("email") and not user.email:
             user.email = extra_data.get("email")
             user.save()
@@ -227,35 +216,30 @@ def create_or_update_profile(user, socialaccount=None, request=None):
 
     profile.save()
 
-    # Optional success messages
     if request:
         if created:
             messages.success(request, "Profile created successfully!")
         elif updated:
             messages.success(request, "Profile updated successfully!")
 
-
-
 # -----------------------------
 # Signals
 # -----------------------------
 @receiver(user_signed_up)
 def handle_user_signed_up(sender, request, user, **kwargs):
-    User.is_active=False
-    User.save()
+    # user.is_active = False
+    # user.save()
+
     socialaccount = user.socialaccount_set.first()
     create_or_update_profile(user, socialaccount, request=request)
-
 
 @receiver(social_account_added)
 def handle_social_account_added(sender, request, sociallogin, **kwargs):
     create_or_update_profile(sociallogin.user, sociallogin.account, request=request)
 
-
 @receiver(social_account_updated)
 def handle_social_account_updated(sender, request, sociallogin, **kwargs):
     create_or_update_profile(sociallogin.user, sociallogin.account, request=request)
-
 
 @receiver(user_logged_in)
 def show_login_message(sender, request, user, **kwargs):

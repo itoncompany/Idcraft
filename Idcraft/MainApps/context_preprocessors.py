@@ -12,13 +12,13 @@ def company_details(request):
 
     if company:
         payment_details = CompanyPaymentDetails.objects.filter(company=company, is_active=True)
-        service_prices = ServicePrice.objects.filter(company=company, is_active=True)
+       
     else:
         payment_details = None
-        service_prices = None
+   
 
     return {
         'company': company,
         'company_payment': payment_details,
-        'service_prices': service_prices,
+       
     }

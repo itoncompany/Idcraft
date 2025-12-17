@@ -11412,3 +11412,128 @@ footer a:hover, footer a:active, footer a:focus {
       height: auto;
     }
   }
+
+
+
+
+  /* for dashboard  grade list */
+
+
+  @media (max-width: 576px) {
+    .card {
+        font-size: 0.8rem;
+    }
+
+    .card h5 {
+        font-size: 0.9rem;
+    }
+
+    .card-img-top {
+        height: 120px;
+        object-fit: cover;
+    }
+
+    .card-body {
+        padding: 0.5rem;
+    }
+
+    .card-footer {
+        padding: 0.5rem;
+    }
+
+    .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+}
+
+
+
+/* for the toast notifications */
+
+
+
+
+
+.toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+    }
+
+    /* Toast box styling */
+    .toast {
+      min-width: 250px;
+      background: #333;
+      color: #fff;
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin-top: 10px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+
+    /* Visible state */
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Close button */
+    .toast button {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      float: right;
+      cursor: pointer;
+    }
+
+
+
+
+
+    @media (max-width: 768px) {
+    .size-list.style-2 {
+        display: none !important;
+    }
+}
+
+
+
+/* for my school dashboard  */
+
+
+.school-name {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #212529;
+}
+.school-description {
+  font-size: 1rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+.school-dashboard{
+  background-color:lightgrey;
+  border-radius:10px;
+  border:1px solid black;
+  padding:15px; 
+  margin-bottom:20px;
+
+}
+.school-logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  border-radius: 0.25rem;
+
+  border: 1px solid black;
+}
+
+/* ENd schoold dashboard css */
+
+
+

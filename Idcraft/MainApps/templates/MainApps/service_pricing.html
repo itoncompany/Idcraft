@@ -128,8 +128,8 @@
                             data-orientation="portrait"
                             data-color="black">
                             <div class="screen bg-white d-flex align-items-center justify-content-center">
-                                <img src="{% static 'img/esewa-9862788996.png' %}"
-                                    alt="Esewa QR"
+                                <img src="{{ company_payment_details.qrcode.url }}"
+                                    alt="QR Code {{company_payment_details.payment_method}}"
                                     class="img-fluid p-3">
                             </div>
                         </div>
@@ -143,13 +143,13 @@
 </section>
 
 <!-- Pricing Section -->
-<section class="bg-gradient-primary-to-secondary py-5" id="download">
+<section class=" py-5" id="download" style=" background-color: #e0e0e0ff;">
     <div class="container px-5 text-center">
-        <h2 class="text-white font-alt mb-3">
+        <h2 class="text-black font-alt mb-3">
             वार्षिक सेवा योजना
         </h2>
 
-        <p class="text-white mb-4 fs-5">
+        <p class="text-black mb-4 fs-5">
             <strong>{{company.app_name |capfirst }}</strong> प्रयोग गर्न {% if service_prices and service_prices.0.frequency == "monthly" %} मासिक {% else %} वार्षिक{% endif %} शुल्क
             <strong>रु. १५००/-</strong>
         </p>

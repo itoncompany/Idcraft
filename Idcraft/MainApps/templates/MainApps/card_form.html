@@ -1,0 +1,606 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block title %}Card Form{% endblock %}
+{% block Main_content %}
+        <!-- Page content-->
+        <div class="container " style="margin-top: 100px; margin-bottom: 100px;">
+            <div class="row">
+                <!-- Blog entries-->
+
+                <!-- Buttons -->
+                <div class="d-flex align-items-center gap-2 mb-4 d-l-none p-2 bg-light rounded shadow-sm">
+                    <!-- Add New Button -->
+                    <button id="addBtn" class="btn btn-dark d-flex align-items-center">
+                        <i class="bi bi-plus-lg me-1"></i>
+                    </button>
+
+                    <!-- Search Input -->
+                    <div class="flex-grow-1">
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control form-control-sm" placeholder="Search">
+                        </div>
+                    </div>
+
+                    <!-- Filter Button -->
+                    <button id="filterBtn" class="btn btn-outline-dark d-flex align-items-center">
+                        <i class="bi bi-funnel-fill"></i>
+                    </button>
+                    <button id="printIdBtn" class="btn btn-dark d-flex align-items-center ">
+                        <i class="bi bi-printer-fill me-2"></i> Print ID Card
+                    </button>
+                </div>
+                
+                <div class="col-lg-8">
+                   
+                <!-- Blog posts grid -->
+                    <div class="row">
+                    {% for student in students %}
+                        <div class="col-6 col-md-6 col-lg-4 mb-4">
+                            <div class="card h-100 shadow-sm">
+
+                                <!-- Student Photo -->
+                                {% if student.photo %}
+                                    <img src="{{ student.photo.url }}"
+                                        class="card-img-top"
+                                        alt="{{ student.full_name }}"
+                                        style="width:100%; height:250px; object-fit:cover;">
+                                {% else %}
+                                    <img src="{% static 'images/default-student.png' %}"
+                                        class="card-img-top"
+                                        alt="No photo"
+                                        style="width:100%; height:250px; object-fit:cover;">
+                                {% endif %}
+
+                                <div class="card-body">
+                                    <div class="small text-muted">
+                                        DOB: {{ student.dob|date:"d M Y" }}
+                                    </div>
+
+                                    <h5 class="card-title mt-1">{{ student.full_name }}</h5>
+
+                                    <p class="card-text mb-2">
+                                        Roll No: {{ student.roll }} <br>
+                                        Grade: {{ student.grade }} <br>
+                                        Section: {{ student.section }}
+                                    </p>
+
+                                    <!-- Action Buttons -->
+                                    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#viewStudentModal{{ student.id }}">
+                                        View
+                                    </button>
+
+                                    <button type="button" class="btn btn-sm btn-secondary" data-bs-toggle="modal" data-bs-target="#editStudentModal{{ student.id }}">
+                                        Edit
+                                    </button>
+
+                                    <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteStudentModal{{ student.id }}">
+                                        Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- View Profile Modal -->
+                        <div class="modal fade" id="viewStudentModal{{ student.id }}" tabindex="-1" aria-labelledby="viewStudentModalLabel{{ student.id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="viewStudentModalLabel{{ student.id }}">Student Profile</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <img src="{{ student.photo.url }}" alt="{{ student.full_name }}"
+                                    class="img-fluid mb-3" style="width:100%; height:auto; object-fit:cover;">
+                                <p><strong>Name:</strong> {{ student.full_name }}</p>
+                                <p><strong>DOB:</strong> {{ student.dob|date:"d M Y" }}</p>
+                                <p><strong>Roll No:</strong> {{ student.roll }}</p>
+                                <p><strong>Grade:</strong> {{ student.grade }}</p>
+                                <p><strong>Section:</strong> {{ student.section }}</p>
+                                <p><strong>Address:</strong> {{ student.address }}</p>
+                                <p><strong>Parent:</strong> {{ student.parent_name }}</p>
+                                <p><strong>Mobile:</strong> {{ student.parent_phone }}</p>
+                                <p><strong>Validity:</strong> {{ student.valid_until|date:"d M Y" }}</p>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+
+                        <!-- Edit Profile Modal -->
+                        <div class="modal fade" id="editStudentModal{{ student.id }}" tabindex="-1" aria-labelledby="editStudentModalLabel{{ student.id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="editStudentModalLabel{{ student.id }}">Edit Student</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form method="POST" action="{% url 'edit_student' student.id %}" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        
+                                        <!-- Roll No & Name -->
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-6">
+                                                <label class="form-label small mb-1">Roll No</label>
+                                                <input type="text" name="roll" value="{{ student.roll }}" class="form-control form-control-sm" required>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small mb-1">Full Name</label>
+                                                <input type="text" name="full_name" value="{{ student.full_name }}" class="form-control form-control-sm" required>
+                                            </div>
+                                        </div>
+
+                                        <!-- Class & Section -->
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-6">
+                                                <label class="form-label small mb-1">Class</label>
+                                                <input type="text" name="class" value="{{ student.grade }}" class="form-control form-control-sm" disabled>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small mb-1">Section</label>
+                                                <select class="form-select form-select-sm" name="section" required>
+                                                    <option value="">Select Section</option>
+                                                    {% for key,value in section_choices %}
+                                                        <option value="{{ value }}" {% if student.section == value %}selected{% endif %}>Section - {{ value }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- Parent & Mobile -->
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-6">
+                                                <label class="form-label small mb-1">Parent</label>
+                                                <input type="text" name="parent_name" value="{{ student.parent_name }}" class="form-control form-control-sm">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small mb-1">Mobile</label>
+                                                <input type="tel" name="mobile" value="{{ student.parent_phone }}" class="form-control form-control-sm">
+                                            </div>
+                                        </div>
+
+                                        <!-- Address & Validity -->
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-6">
+                                                <label class="form-label small mb-1">Address</label>
+                                                <input type="text" name="address" value="{{ student.address }}" class="form-control form-control-sm">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small mb-1">Validity</label>
+                                                <input type="date" name="validity" value="{{ student.valid_until|date:'Y-m-d' }}" class="form-control form-control-sm">
+                                            </div>
+                                        </div>
+
+                                        <!-- Photo & Status -->
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-6">
+                                                <label class="form-label small mb-1">Photo</label>
+                                                <input type="file" name="photo" class="form-control form-control-sm">
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small mb-1">Status</label>
+                                                <select class="form-select form-select-sm" name="status">
+                                                    <option value="ACTIVE" {% if student.status == "ACTIVE" %}selected{% endif %}>Active</option>
+                                                    <option value="INACTIVE" {% if student.status == "INACTIVE" %}selected{% endif %}>Inactive</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                                    </form>
+
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+
+                        <!-- Delete Confirmation Modal -->
+                        <div class="modal fade" id="deleteStudentModal{{ student.id }}" tabindex="-1" aria-labelledby="deleteStudentModalLabel{{ student.id }}" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteStudentModalLabel{{ student.id }}">Delete Student</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                Are you sure you want to delete <strong>{{ student.full_name }}</strong>?
+                            </div>
+                            <div class="modal-footer">
+                                <form method="POST" action="{% url 'delete_student' student.id %}">
+                                    {% csrf_token %}
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </div>
+                            </div>
+                        </div>
+                        </div>
+
+                    {% empty %}
+                        <div class="col-12 text-center">
+                            <p class="text-muted">No students found.</p>
+                        </div>
+                    {% endfor %}
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav aria-label="Pagination">
+                        <hr class="my-0" />
+                        <ul class="pagination justify-content-center my-4">
+
+                            <!-- Previous button -->
+                            {% if students.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ students.previous_page_number }}" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo; Newer</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">&laquo; Newer</a>
+                                </li>
+                            {% endif %}
+
+                            <!-- Page numbers -->
+                            {% for num in students.paginator.page_range %}
+                                {% if students.number == num %}
+                                    <li class="page-item active" aria-current="page">
+                                        <a class="page-link" href="#">{{ num }}</a>
+                                    </li>
+                                {% elif num > students.number|add:-3 and num < students.number|add:3 %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% elif num == 1 or num == students.paginator.num_pages %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                    </li>
+                                {% elif num == students.number|add:-3 or num == students.number|add:3 %}
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#">...</a>
+                                    </li>
+                                {% endif %}
+                            {% endfor %}
+
+                            <!-- Next button -->
+                            {% if students.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ students.next_page_number }}" aria-label="Next">
+                                        <span aria-hidden="true">Older &raquo;</span>
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Older &raquo;</a>
+                                </li>
+                            {% endif %}
+
+                        </ul>
+                    </nav>
+
+                </div>
+                <!-- Side widgets-->
+                <div class="col-lg-4 d-none d-md-block">
+                    
+                    <div class="card mb-4">
+                        <div class="card-header py-2 fw-bold">Filter Students</div>
+                        <div class="card-body p-2">
+
+                            <form method="get" id="filterForm">
+
+                                <!-- Class & Section -->
+                                <div class="row g-1 mb-2">
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Class</label>
+                                        <input type="text" name="class" class="form-control form-control-sm" value="{{ class_id }}" disabled>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1"> Section</label>
+                                        <select class="form-select form-select-sm" name="section">
+                                            <option value="">Select Section</option>
+                                            {% for key,value in section_choices %}
+                                                <option value="{{ value }}"> Section - {{ value }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Search Name / ID -->
+                                <div class="mb-2">
+                                    <label class="form-label small mb-1">Search Name / ID</label>
+                                    <input type="text" name="search" class="form-control form-control-sm"
+                                        placeholder="Enter name or ID">
+                                </div>
+
+                                <!-- Filter by ID -->
+                                <div class="mb-2">
+                                    <label class="form-label small mb-1">
+                                        Filter by ID No. <span class="text-muted">(comma-separated)</span>
+                                    </label>
+                                    <input type="text" name="ids" class="form-control form-control-sm"
+                                        placeholder="101,102,105">
+                                </div>
+
+                                <!-- Buttons -->
+                                <div class="d-flex gap-1">
+                                    <button type="submit" class="btn btn-sm btn-primary w-100">
+                                        Filter
+                                    </button>
+                                    <a href="?" class="btn btn-sm btn-outline-secondary w-100">
+                                        Reset
+                                    </a>
+                                </div>
+
+                            </form>
+
+                        </div>
+                    </div>
+
+                    <!-- Side widget-->
+                   <div class="card mb-3 d-none d-md-block">
+                        <div class="card-header py-2 fw-bold">Student Form</div>
+                        <div class="card-body p-2">
+                            <form>
+
+                                <!-- Roll No & Name -->
+                                <div class="row g-2 mb-2">
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Roll No</label>
+                                        <input type="text" class="form-control form-control-sm">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Full Name</label>
+                                        <input type="text" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+
+                                <!-- Class & Section -->
+                                <div class="row g-2 mb-2">
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Class</label>
+                                        <input type="text" name="class" value="{{ class_id }}" class="form-control form-control-sm" disabled>
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1"> Section</label>
+                                        <select class="form-select form-select-sm" name="section">
+                                            <option value="">Select Section</option>
+                                            {% for key,value in section_choices %}
+                                                <option value="{{ value }}"> Section - {{ value }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Parent & Mobile -->
+                                <div class="row g-2 mb-2">
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Parent</label>
+                                        <input type="text" class="form-control form-control-sm">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Mobile</label>
+                                        <input type="tel" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+
+                                <!-- Address & Validity -->
+                                <div class="row g-2 mb-2">
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Address</label>
+                                        <input type="text" class="form-control form-control-sm">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Validity</label>
+                                        <input type="date" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+
+                                <!-- Photo & Status -->
+                                <div class="row g-2 mb-2">
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Photo</label>
+                                        <input type="file" class="form-control form-control-sm">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Status</label>
+                                        <select class="form-select form-select-sm">
+                                            <option>Active</option>
+                                            <option>Inactive</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Button -->
+                                <!-- Submit & Preview Buttons -->
+                                <div class="d-flex gap-2 mt-2">
+                                    <button type="submit" class="btn btn-primary btn-sm flex-fill">Save</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm flex-fill" id="previewButton">Preview</button>
+                                </div>
+
+
+                            </form>
+                        </div>
+                    </div>
+                     {% comment %} <div class="masthead-device-mockup">
+                                      
+
+                                        <div class="device-wrapper">
+                                            <div class="device"
+                                                data-device="iPhoneX"
+                                                data-orientation="portrait"
+                                                data-color="black">
+                                                <div class="screen bg-white d-flex align-items-center justify-content-center">
+                                                    <img src="{{idcard_.template_image.url}}"
+                                                        alt="{{school.school_name}} ID Card Template"
+                                                        class="img-fluid p-3">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                </div> {% endcomment %}
+            </div>
+        </div>
+
+        <!-- Filter Modal -->
+        <div class="modal fade" id="filterModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Filter Students</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Django filter form -->
+                        <form method="post" id="filterForm">
+                            {% csrf_token %}
+                            <div class="row g-1 mb-2">
+                                <div class="col-6">
+                                    <label class="form-label small mb-1">Class</label>
+                                    <input type="text" name="class" class="form-control form-control-sm" value="{{ class_id }}">
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small mb-1"> Section</label>
+                                    <select class="form-select form-select-sm" name="section">
+                                        <option value="">Select Section</option>
+                                        {% for key,value in section_choices %}
+                                            <option value="{{ value }}"> Section - {{ value }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small mb-1">Search Name / ID</label>
+                                <input type="text" name="search" class="form-control form-control-sm"
+                                    placeholder="Enter name or ID">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small mb-1">Filter by ID No. <span class="text-muted">(comma-separated)</span></label>
+                                <input type="text" name="ids" class="form-control form-control-sm" placeholder="101,102,105">
+                            </div>
+                            <div class="d-flex gap-1">
+                                <button type="submit" class="btn btn-sm btn-primary w-100">Filter</button>
+                                <a href="" class="btn btn-sm btn-outline-secondary w-100">Reset</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Add Student Modal -->
+        <div class="modal fade" id="studentModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content">
+                    
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Student</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="modal-body">
+                        <form>
+
+                              
+                                <div class="row g-2 mb-2">
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Roll No</label>
+                                        <input type="text" class="form-control form-control-sm">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Full Name</label>
+                                        <input type="text" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+
+                                <!-- Class & Section -->
+                                <div class="row g-2 mb-2">
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Class</label>
+                                        <input type="text" name="class" value="{{ class_id }}" class="form-control form-control-sm">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1"> Section</label>
+                                        <select class="form-select form-select-sm" name="section">
+                                            <option value="">Select Section</option>
+                                            {% for key,value in section_choices %}
+                                                <option value="{{ value }}"> Section - {{ value }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Parent & Mobile -->
+                                <div class="row g-2 mb-2">
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Parent</label>
+                                        <input type="text" class="form-control form-control-sm">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Mobile</label>
+                                        <input type="tel" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+
+                                <!-- Address & Validity -->
+                                <div class="row g-2 mb-2">
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Address</label>
+                                        <input type="text" class="form-control form-control-sm">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Validity</label>
+                                        <input type="date" class="form-control form-control-sm">
+                                    </div>
+                                </div>
+
+                                <!-- Photo & Status -->
+                                <div class="row g-2 mb-2">
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Photo</label>
+                                        <input type="file" class="form-control form-control-sm">
+                                    </div>
+                                    <div class="col-6">
+                                        <label class="form-label small mb-1">Status</label>
+                                        <select class="form-select form-select-sm">
+                                            <option>Active</option>
+                                            <option>Inactive</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Button -->
+                                <!-- Submit & Preview Buttons -->
+                                <div class="d-flex gap-2 mt-2">
+                                    <button type="submit" class="btn btn-primary btn-sm flex-fill">Save</button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm flex-fill" id="previewButton">Preview</button>
+                                </div>
+
+
+                            </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- Scripts -->
+        <script>
+        document.getElementById('filterBtn').addEventListener('click', function() {
+            var filterModal = new bootstrap.Modal(document.getElementById('filterModal'));
+            filterModal.show();
+        });
+
+        document.getElementById('addBtn').addEventListener('click', function() {
+            var studentModal = new bootstrap.Modal(document.getElementById('studentModal'));
+            studentModal.show();
+        });
+        </script>
+
+{% endblock %}

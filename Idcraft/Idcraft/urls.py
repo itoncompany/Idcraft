@@ -9,6 +9,8 @@ urlpatterns = [
     path('', include('MainApps.urls')),  # example
     path('auth/', include('Authentications.urls')),  # for authentication app
     path('accounts/', include('allauth.urls')),  # for django-allauth
+    path('contact/', include('ContactUs.urls')),  # for contact us app
+    path('reviews/', include('RatingAndReviews.urls')),  # for reviews app
 ]
 
 # Serve static and media files during development

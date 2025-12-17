@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+{% load static %}
+{% block title %}Grade List{% endblock %}
+
+{% block Main_content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5 mt-5">
+       <div class="card mb-4 w-100 shadow-sm">
+            <div class="row g-0 align-items-center">
+
+                <!-- Image -->
+                <div class="col-md-7">
+                    {% if school.school_image %}
+                        <img src="{{ school.school_image.url }}"
+                            class="img-fluid w-100 rounded-start"
+                            style="object-fit: cover; width: 100%; height: 250px;    "
+                            alt="{{ school.school_name }}">
+                    {% endif %}
+                </div>
+
+                <!-- Content -->
+                <div class="col-md-5">
+                    <div class="card-body">
+                        <h5 class="card-title" style="font-size: 30px;">{{ school.school_name }}</h5>
+
+                        <p class="card-text" style="font-size: 20px;">
+                            {{ school.description|default:"School description goes here." }}
+                        </p>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                Address {{ school.address|default:"No address provided." }}
+                            </small>
+                        </p>
+
+                        <p class="card-text">
+                            <small class="text-muted">
+                                Last updated {{ school.updated_at|default:"recently" }}
+                            </small>
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+            {% for value, label in grades %}
+            <div class="col mb-5">
+                <div class="card h-100 text-center px-3">
+                    <img class="card-img-top"
+                         src="{% static "img/gif/card.gif" %}"
+                         alt="Grade {{ grade }}">
+
+                    <div class="card-footer pt-0 border-top-0 mb-2">
+                        <a href="{% url 'card_form' value %}"
+                        class="btn btn-outline-dark d-flex align-items-center justify-content-center gap-2 mt-auto">
+
+                            <span class="fw-semibold">Grade {{ value }}</span>
+
+                            <!-- Bold Arrow Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                width="18" height="18"
+                                fill="currentColor"
+                                class="bi bi-arrow-right"
+                                viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                    d="M1 8a.5.5 0 0 1 .5-.5h9.793L8.146 4.354a.5.5 0 1 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 1 1-.708-.708L11.293 8.5H1.5A.5.5 0 0 1 1 8"/>
+                            </svg>
+
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,169 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}
+{% if service_prices and service_prices.0.frequency == "monthly" %} मासिक सेवा योजना {% else %} वार्षिक सेवा योजना {% endif %}
+{% endblock %}
+
+{% block Main_content %}
+
+<!-- Service Features Section -->
+    <section id="features" style="margin-top: 100px;">
+        <div class="container px-5">
+            <div class="row gx-5 align-items-center">
+
+                <!-- Service Details -->
+                <div class="col-lg-8 order-lg-1 mb-5 mb-lg-0">
+                    <div class="container-fluid px-5">
+
+                        <div class="row gx-5">
+
+                            <!-- Update Profile -->
+                            <div class="col-md-6 mb-5">
+                                <div class="text-center">
+                                    <i class="bi-person-circle icon-feature text-gradient d-block mb-3"></i>
+                                    <h3 class="font-alt">प्रोफाइल अपडेट</h3>
+                                    <p class="text-muted mb-0">
+                                        आफ्नो व्यक्तिगत विवरण सजिलै
+                                        अद्यावधिक गर्न सकिने सुविधा ।
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- School Details -->
+                            <div class="col-md-6 mb-5">
+                                <div class="text-center">
+                                    <i class="bi-building icon-feature text-gradient d-block mb-3"></i>
+                                    <h3 class="font-alt">विद्यालय विवरण</h3>
+                                    <p class="text-muted mb-0">
+                                        विद्यालयको जानकारी,
+                                        लोगो तथा विवरण व्यवस्थापन ।
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+
+                            <!-- Change Password -->
+                            <div class="col-md-6 mb-5 mb-md-0">
+                                <div class="text-center">
+                                    <i class="bi-key icon-feature text-gradient d-block mb-3"></i>
+                                    <h3 class="font-alt">पासवर्ड परिवर्तन</h3>
+                                    <p class="text-muted mb-0">
+                                        आफ्नो खाता सुरक्षित राख्न
+                                        पासवर्ड परिवर्तन गर्ने सुविधा ।
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- View Grade -->
+                            <div class="col-md-6">
+                                <div class="text-center">
+                                    <i class="bi-mortarboard icon-feature text-gradient d-block mb-3"></i>
+                                    <h3 class="font-alt">कक्षा / ग्रेड हेर्नुहोस्</h3>
+                                    <p class="text-muted mb-0">
+                                        विद्यार्थीहरूको कक्षा,
+                                        सेक्सन तथा विवरण हेर्न सकिने सुविधा ।
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+
+            <!-- Device / QR Mockup -->
+            <div class="col-lg-4 order-lg-0">
+                <div class="features-device-mockup position-relative">
+                    <!-- Background Circle -->
+                    <svg class="circle"
+                        viewBox="0 0 100 100"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style="width: 260px; height: 260px;">
+                        
+                        <defs>
+                            <linearGradient id="circleGradient" gradientTransform="rotate(45)">
+                                <stop offset="0%"  stop-color="#fc25c611"/>
+                                <stop offset="100%" stop-color="#6b11cb57"/>
+                            </linearGradient>
+                        </defs>
+
+                        <circle cx="50" cy="50" r="50" fill="url(#circleGradient)"></circle>
+                    </svg>
+
+                    <!-- Shape 1 -->
+                    <svg class="shape-1 d-none d-sm-block"
+                        viewBox="0 0 240.83 240.83"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <rect x="-32.54" y="108.39" width="305.92" height="84.05"
+                            rx="42.03"
+                            transform="translate(120.42 -49.88) rotate(45)"></rect>
+                        <rect x="-32.54" y="78.39" width="305.92" height="84.05"
+                            rx="42.03"
+                            transform="translate(-49.88 120.42) rotate(-45)"></rect>
+                    </svg>
+
+                    <!-- Shape 2 -->
+                    <svg class="shape-2 d-none d-sm-block"
+                        viewBox="0 0 200 200"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style="
+                            width: 450px;
+                            height: 450px;
+                            position: absolute;
+                            top: -180px;
+                            right: -180px;
+                            opacity: 0.25;
+                        ">
+                        <defs>
+                            <radialGradient id="radialGlow">
+                                <stop offset="0%" stop-color="#6a11cb"/>
+                                <stop offset="100%" stop-color="#2575fc"/>
+                            </radialGradient>
+                        </defs>
+                        <circle cx="100" cy="100" r="100" fill="url(#radialGlow)"></circle>
+                    </svg>
+                    <!-- QR Device -->
+                    <div class="device-wrapper">
+                        <div class="device"
+                            data-device="iPhoneX"
+                            data-orientation="portrait"
+                            data-color="black">
+                            <div class="screen bg-white d-flex align-items-center justify-content-center">
+                                <img src="{{school.school_logo.url}}"
+                                    alt="Esewa QR"
+                                    class="img-fluid p-3">
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Pricing Section -->
+<section class=" py-5" id="download" style=" background-color: #e0e0e0ff;">
+    <div class="container px-5 text-center">
+        <h2 class="text-black font-alt mb-3">
+            वार्षिक सेवा योजना
+        </h2>
+
+        <p class="text-black mb-4 fs-5">
+            <strong>{{company.app_name |capfirst }}</strong> प्रयोग गर्न {% if service_prices and service_prices.0.frequency == "monthly" %} मासिक {% else %} वार्षिक{% endif %} शुल्क
+            <strong>रु. १५००/-</strong>
+        </p>
+
+        <a href="#" class="btn btn-dark btn-lg">
+            QR Code मार्फत भुक्तानी गर्नुहोस्
+        </a>
+    </div>
+</section>
+
+{% endblock %}
