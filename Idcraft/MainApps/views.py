@@ -5,6 +5,7 @@ from MainApps.models import SchoolDetails, Student,IDCardTemplate
 from RatingAndReviews.models import Feedback
 from Authentications.models import ServicePrice,CompanyPaymentDetails
 # Create your views here.
+from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
@@ -65,50 +66,66 @@ def grade_list(request):
     return render(request, 'MainApps/grade_list.html', context)
 
 
+    
 def card_form(request, class_id=None):
     user = request.user
     school = SchoolDetails.objects.filter(user=user).first()
-    if not school:
-        return render(request, "MainApps/error.html", {
-            "message": "No school details found for the logged-in user."
-        })
-    students_list = school.students.filter(grade=class_id).order_by('grade', 'section', 'roll')
-    IdCardTemplate=IDCardTemplate.objects.filter(school=school).first()
-    if not IdCardTemplate:
-        return render(request, "MainApps/error.html", {
-            "message": "No ID Card Template found for your school. Please create one first."
-        })
-     # Pagination
-    page = request.GET.get('page', 1) 
-    paginator = Paginator(students_list, 10) 
-    try:
-        students = paginator.page(page)
-    except PageNotAnInteger:
-       
-        students = paginator.page(1)
-    except EmptyPage:
-        students = paginator.page(paginator.num_pages)
+
+    students_list = school.students.filter(grade=class_id)
+
+    # Search by roll
+    roll = request.GET.get('roll')
+    if roll:
+        students_list = students_list.filter(roll__icontains=roll)
+
+    # Filter status
+    status = request.GET.get('status')
+    if status:
+        students_list = students_list.filter(status=status)
+
+    # Filter section
+    section = request.GET.get('section')
+    if section:
+        students_list = students_list.filter(section=section)
+
+    # Sorting
+    sort = request.GET.get('sort')
+    if sort == 'az':
+        students_list = students_list.order_by('full_name')
+    elif sort == 'za':
+        students_list = students_list.order_by('-full_name')
+    elif sort == 'roll':
+        students_list = students_list.order_by('roll')
+    else:
+        students_list = students_list.order_by('grade', 'section', 'roll')
+
+    # Pagination
+    paginator = Paginator(students_list, 10)
+    page = request.GET.get('page')
+    students = paginator.get_page(page)
 
     context = {
-        "school": school,
         "students": students,
-        "grade_choices": Student.GRADE_CHOICES,
-        "gender_choices": Student.GENDER_CHOICES,
         "section_choices": Student.SECTION_CHOICES,
-        "class_id": class_id,
-        "idcard_":IdCardTemplate,
+        "gender_choices": Student.GENDER_CHOICES,
+        "school": school,
+        "class_id":class_id,
     }
     return render(request, "MainApps/card_form.html", context)
 
 
 
+
+
+
+@login_required
 def edit_student(request, pk):
     student = get_object_or_404(Student, pk=pk)
+
     if request.method == 'POST':
-        # Update fields directly from POST
+        # Basic fields
         student.full_name = request.POST.get('full_name', student.full_name)
         student.roll = request.POST.get('roll', student.roll)
-        student.dob = request.POST.get('dob', student.dob)
         student.grade = request.POST.get('grade', student.grade)
         student.section = request.POST.get('section', student.section)
         student.gender = request.POST.get('gender', student.gender)
@@ -116,19 +133,80 @@ def edit_student(request, pk):
         student.student_phone = request.POST.get('student_phone', student.student_phone)
         student.parent_name = request.POST.get('parent_name', student.parent_name)
         student.parent_phone = request.POST.get('parent_phone', student.parent_phone)
+        student.address = request.POST.get('address', student.address)
+        student.status = request.POST.get('status', student.status)
 
-        # Handle photo upload
-        if 'photo' in request.FILES:
+        # Date fields (safe parsing)
+        dob = request.POST.get('dob')
+        if dob:
+            student.dob = dob
+
+        valid_until = request.POST.get('valid_until')
+        if valid_until:
+            student.valid_until = valid_until
+
+        # Photo upload
+        if request.FILES.get('photo'):
             student.photo = request.FILES['photo']
 
         student.save()
         messages.success(request, f"{student.full_name} updated successfully!")
-        return redirect(request.META.get('HTTP_REFERER', 'students_list'))  # Go back to previous page
 
-    # If GET, just redirect back (no form page needed)
+    # Always return to previous page (modal UX)
+    return redirect(request.META.get('HTTP_REFERER', 'home'))
+
+@login_required
+def add_student(request):
+    if request.method == 'POST':
+        # Get grade safely, fallback to 'OTHER' if missing or empty
+        grade = request.POST.get('grade')
+        if not grade:  # handles None or empty string
+            grade = 'OTHER'
+        school = SchoolDetails.objects.filter(user=request.user).first()
+
+        student = Student(
+            user=request.user,
+            school=school,
+            full_name=request.POST.get('full_name', '').strip(),
+            roll=request.POST.get('roll', '').strip() or None,
+            grade=grade,
+            section=request.POST.get('section', '').strip() or None,
+            gender=request.POST.get('gender') or 'OTHER',
+            parent_name=request.POST.get('parent_name', '').strip() or None,
+            parent_phone=request.POST.get('parent_phone', '').strip() or None,
+            address=request.POST.get('address', '').strip() or None,
+            status=request.POST.get('status', 'NEW'),
+        )
+
+        if request.FILES.get('photo'):
+            student.photo = request.FILES['photo']
+
+        student.save()
+        messages.success(request, f"{student.full_name} added successfully!")
+
     return redirect(request.META.get('HTTP_REFERER', 'students_list'))
 
+@login_required
+def edit_student(request, pk):
+    student = get_object_or_404(Student, pk=pk)
+    if request.method == 'POST':
+        student.full_name = request.POST.get('full_name')
+        student.roll = request.POST.get('roll')
+        student.section = request.POST.get('section')
+        student.gender = request.POST.get('gender')
+        student.status = request.POST.get('status')
+        student.parent_name = request.POST.get('parent_name')
+        student.parent_phone = request.POST.get('parent_phone')
+        student.address = request.POST.get('address')
 
+        if request.FILES.get('photo'):
+            student.photo = request.FILES['photo']
+
+        student.save()
+        messages.success(request, f"{student.full_name} updated successfully!")
+        return redirect(request.META.get('HTTP_REFERER', 'students_list'))
+
+    return redirect('students_list')
 
 
 def delete_student(request, pk):

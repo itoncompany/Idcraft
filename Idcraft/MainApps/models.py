@@ -69,6 +69,14 @@ class Student(models.Model):
         ('H', 'H'),
 
     ] #this isf for
+    ID_STATUS_CHOICES = [
+    ('NEW', 'New'),
+    ('ACTIVE', 'Active'),
+    ('LOST', 'Lost'),
+    ('REISSUED', 'Reissued'),
+    ('EXPIRED', 'Expired'),
+]
+
 
     user = models.ForeignKey(
         User,
@@ -102,10 +110,7 @@ class Student(models.Model):
     valid_until = models.DateField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    status = models.CharField(max_length=20, choices=[
-        ('ACTIVE', 'Active'),
-        ('INACTIVE', 'Inactive'),
-    ], default='ACTIVE')
+    status = models.CharField(max_length=20, choices=ID_STATUS_CHOICES, default='ACTIVE')
 
     class Meta:
         verbose_name = 'Student'
@@ -142,6 +147,11 @@ class Student(models.Model):
 
 
 class IDCardTemplate(models.Model):
+    CARD_CHOICES=[
+        ('LOST','Lost'),
+        ('RENEW','Renew'),
+        ('New','New')
+    ]
     school= models.ForeignKey(SchoolDetails, on_delete=models.CASCADE, related_name='id_card_templates')
     name = models.CharField(max_length=100, help_text="Template name, e.g., 'Standard', 'Premium'")
     template_image = models.ImageField(upload_to='id_card_templates/', blank=True, null=True, help_text="Background image of the ID card template")
