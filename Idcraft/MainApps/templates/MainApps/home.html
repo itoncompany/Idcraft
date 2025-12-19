@@ -14,15 +14,18 @@
                             <span style="color: #383838ff;font-weight:bolder;font-size: 5.5rem;font-family: 'Poppins', sans-serif;">{{company.app_name | capfirst}}</span> – छिटो र सजिलो ID कार्ड
                             </h1>
 
-                            <!-- Description -->
-                            <p class="lead text-muted mb-5" style="font-family: 'Lato', sans-serif; font-size: 1.125rem;">
-                            विद्यालय, कलेज वा अफिसका लागि भरपर्दो र छिटो सेवा।<br>
-                            IDcraft ले तपाईंको ID कार्ड बनाउने काम सरल र प्रभावकारी बनाउँछ। आजै प्रयोग गर्नुहोस्!
-                            </p>
+                          <!-- Description -->
+                          <p class="lead text-muted mb-5 d-none d-md-block" style="font-family: 'Lato', sans-serif; font-size: 1.125rem;">
+                              विद्यालय, कलेज वा अफिसका लागि भरपर्दो र छिटो सेवा।<br>
+                              IDcraft ले तपाईंको ID कार्ड बनाउने काम सरल र प्रभावकारी बनाउँछ। आजै प्रयोग गर्नुहोस्!
+                          </p>
 
-                           <!-- Call to Action Buttons -->
-                          <div class="d-flex flex-column flex-sm-row align-items-center gap-3">
-                              <div id="download-app-container" class="text-center" style="border:none;">
+
+                          <!-- Call to Action Buttons -->
+                          <!-- Call to Action Buttons -->
+                          <div class="d-flex justify-content-center align-items-center gap-3 mt-4">
+                              <!-- Download Button -->
+                              <div id="download-app-container">
                                   <script>
                                   document.addEventListener('DOMContentLoaded', function() {
                                       const container = document.getElementById('download-app-container');
@@ -48,32 +51,36 @@
                                           }
                                       } else if (/android/i.test(userAgent)) {
                                           if(androidLink){
-                                              buttonHTML = `<a href="${androidLink}" class="btn btn-dark btn-lg">
-                                                              <i class="bi bi-android2"></i> Download for Android
+                                              buttonHTML = `<a href="${androidLink}" class="btn btn-dark btn-lg d-flex align-items-center gap-2">
+                                                              <i class="bi bi-android2"></i> Android
                                                             </a>`;
                                           }
                                       } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
                                           if(iosLink){
-                                              buttonHTML = `<a href="${iosLink}" class="btn btn-dark btn-lg">
-                                                              <i class="bi bi-apple"></i> Download for iOS
+                                              buttonHTML = `<a href="${iosLink}" class="btn btn-dark btn-lg d-flex align-items-center gap-2">
+                                                              <i class="bi bi-apple"></i> iOS
                                                             </a>`;
                                           }
                                       } else {
-                                          buttonHTML = `<a href="${websiteLink}" class="btn btn-dark btn-lg">
-                                                          <i class="bi bi-globe"></i> Download App
+                                          buttonHTML = `<a href="${websiteLink}" class="btn btn-dark btn-lg d-flex align-items-center gap-2">
+                                                          <i class="bi bi-globe"></i> Website
                                                         </a>`;
                                       }
 
                                       container.innerHTML = buttonHTML;
                                   });
                                   </script>
-                                  <!-- Buttons will be inserted here dynamically -->
                               </div>
 
-                              <a href="#demo" class="btn btn-outline-dark btn-lg d-inline-block">
-                                  Demo
+                              <!-- Demo Button -->
+                               <a href="#!" id="demoBtn" class="btn btn-dark btn-lg d-flex align-items-center gap-2">
+                                  <i class="bi bi-play-circle"></i> Demo
                               </a>
+
+
                           </div>
+
+
 
                         </div>
                     </div>
@@ -132,9 +139,9 @@
         <section id="reviews" style="padding:4rem 0;">
           <div class="container">
 
-            <h2 class="text-center mb-5" style="font-family:Arial,sans-serif;">
-              Reviews from Our Clients
-            </h2>
+            <h5 class="text-center mb-5" style="font-size:1.5rem;font-family: 'Poppins', sans-serif;">
+             Client Experiences
+            </h5>
 
             <div id="reviewsCarousel"
                 class="carousel slide"
@@ -153,10 +160,10 @@
                       <!-- Review Card -->
                       <div style="
                         background:#fff;
-                        border-radius:12px;
+                        border-radius:0px;
                         padding:1.2rem;
                         width:100%;
-                        max-width:320px;
+                        max-width:320px;border:1px solid #e0e0e0;
                         box-shadow:0 4px 12px rgba(0,0,0,0.08);
                       ">
 
@@ -217,15 +224,16 @@
 
               </div>
 
-              <!-- Controls -->
-              <button class="carousel-control-prev" type="button"
-                      data-bs-target="#reviewsCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
+             <button class="carousel-control-prev" type="button" data-bs-target="#reviewsCarousel" data-bs-slide="prev">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="black" class="bi bi-chevron-left" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L6.707 7l4.647 4.646a.5.5 0 0 1-.708.708l-5-5a.5.5 0 0 1 0-.708l5-5a.5.5 0 0 1 .708 0z"/>
+                </svg>
               </button>
 
-              <button class="carousel-control-next" type="button"
-                      data-bs-target="#reviewsCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
+              <button class="carousel-control-next" type="button" data-bs-target="#reviewsCarousel" data-bs-slide="next">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="black" class="bi bi-chevron-right" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l5 5a.5.5 0 0 1 0 .708l-5 5a.5.5 0 0 1-.708-.708L9.293 7 4.646 2.354a.5.5 0 0 1 0-.708z"/>
+                </svg>
               </button>
 
             </div>
@@ -262,4 +270,68 @@
             </div>
           </div>
         </section>
+
+
+<!-- Bootstrap Modal -->
+    <div class="modal fade" id="demoModal" tabindex="-1" aria-labelledby="demoModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="demoModalLabel">Demo Video</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-0">
+            <div class="ratio ratio-16x9">
+              <iframe id="demoVideo" src="" title="Demo Video" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const demoBtn = document.getElementById('demoBtn');
+        const demoVideo = document.getElementById('demoVideo');
+        const demoModalEl = document.getElementById('demoModal');
+        const demoModal = new bootstrap.Modal(demoModalEl);
+
+        // List of YouTube URLs (regular, shortened, or watch links)
+        const videos = [
+            "https://youtu.be/IyUnskXEAp8?si=VO_18RC819z7a0n3",
+            "https://www.youtube.com/watch?v=3JZ_D3ELwOQ",
+            "https://www.youtube.com/watch?v=tgbNymZ7vqY"
+        ];
+
+        // Convert any YouTube link to embed URL with autoplay & mute
+        function toEmbedURL(url) {
+            let videoId = "";
+            const ytShort = url.match(/youtu\.be\/([^\?]+)/);
+            const ytWatch = url.match(/v=([^&]+)/);
+
+            if (ytShort) videoId = ytShort[1];
+            else if (ytWatch) videoId = ytWatch[1];
+            else return ""; // invalid URL
+
+            return `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1`;
+        }
+
+        demoBtn.addEventListener('click', function() {
+            // Pick a random video
+            const randomVideo = videos[Math.floor(Math.random() * videos.length)];
+            demoVideo.src = toEmbedURL(randomVideo);
+            demoModal.show();
+        });
+
+        // Clear video when modal is closed
+        demoModalEl.addEventListener('hidden.bs.modal', function () {
+            demoVideo.src = "";
+        });
+    });
+    </script>
+
+
         {% endblock %}

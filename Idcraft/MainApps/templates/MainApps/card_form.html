@@ -21,76 +21,76 @@
                             <div class="col-12 col-lg-8">
                                 <form method="get" class="result-actions d-flex flex-wrap justify-content-end gap-2">
 
-                                    <!-- Add New Student Button -->
-                                    <div class="col-auto p-0">
-                                        <button type="button"
-                                                class="btn btn-soft-success btn-icon"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#studentModal"
-                                                id="addStudentBtn">
-                                            <i class="bi bi-plus-lg"></i>
-                                            New Student
-                                        </button>
-                                    </div>
+   
 
-                                    <!-- Roll search -->
-                                    <div class="col-12 col-sm-6 col-md-auto p-0">
-                                        <input type="text"
-                                            name="roll"
-                                            value="{{ request.GET.roll }}"
-                                            class="form-control form-control-sm"
-                                            placeholder="Search Roll No"
-                                            style="min-width:120px;">
-                                    </div>
+                            <!-- Roll search -->
+                            <div class="col-12 col-sm-6 col-md-auto p-0">
+                                <input type="text"
+                                    name="roll"
+                                    value="{{ request.GET.roll }}"
+                                    class="form-control form-control-sm"
+                                    placeholder="Search Roll No"
+                                    style="min-width:120px;">
+                            </div>
 
-                                    <!-- Status filter -->
-                                    <div class="col-12 col-sm-6 col-md-auto p-0">
-                                        <select name="status" class="form-control form-control-sm" style="min-width:120px;">
-                                            <option value="">All Status</option>
-                                            {% for key, val in students.paginator.object_list.model.ID_STATUS_CHOICES %}
-                                                <option value="{{ key }}" {% if request.GET.status == key %}selected{% endif %}>{{ val }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
+                            <!-- Status filter -->
+                            <div class="col-12 col-sm-6 col-md-auto p-0">
+                                <select name="status" class="form-control form-control-sm" style="min-width:120px;">
+                                    <option value="">All Status</option>
+                                    {% for key, val in students.paginator.object_list.model.ID_STATUS_CHOICES %}
+                                        <option value="{{ key }}" {% if request.GET.status == key %}selected{% endif %}>{{ val }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
 
-                                    <!-- Section filter -->
-                                    <div class="col-12 col-sm-6 col-md-auto p-0">
-                                        <select name="section" class="form-control form-control-sm" style="min-width:100px;">
-                                            <option value="">All Sections</option>
-                                            {% for key, val in section_choices %}
-                                                <option value="{{ key }}" {% if request.GET.section == key %}selected{% endif %}>{{ val }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
+                            <!-- Section filter -->
+                            <div class="col-12 col-sm-6 col-md-auto p-0">
+                                <select name="section" class="form-control form-control-sm" style="min-width:100px;">
+                                    <option value="">All Sections</option>
+                                    {% for key, val in section_choices %}
+                                        <option value="{{ key }}" {% if request.GET.section == key %}selected{% endif %}>{{ val }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
 
-                                    <!-- Sort filter -->
-                                    <div class="col-12 col-sm-6 col-md-auto p-0">
-                                        <select name="sort" class="form-control form-control-sm" style="min-width:120px;">
-                                            <option value="">Sort By</option>
-                                            <option value="az" {% if request.GET.sort == 'az' %}selected{% endif %}>Name (A-Z)</option>
-                                            <option value="za" {% if request.GET.sort == 'za' %}selected{% endif %}>Name (Z-A)</option>
-                                            <option value="roll" {% if request.GET.sort == 'roll' %}selected{% endif %}>Roll No</option>
-                                        </select>
-                                    </div>
+                            <!-- Sort filter -->
+                            <div class="col-12 col-sm-6 col-md-auto p-0">
+                                <select name="sort" class="form-control form-control-sm" style="min-width:120px;">
+                                    <option value="">Sort By</option>
+                                    <option value="az" {% if request.GET.sort == 'az' %}selected{% endif %}>Name (A-Z)</option>
+                                    <option value="za" {% if request.GET.sort == 'za' %}selected{% endif %}>Name (Z-A)</option>
+                                    <option value="roll" {% if request.GET.sort == 'roll' %}selected{% endif %}>Roll No</option>
+                                </select>
+                            </div>
 
-                                    <!-- Apply Filter Button -->
-                                    <div class="col-auto p-0">
-                                        <button class="btn btn-soft-base btn-icon" type="submit" title="Apply">
-                                            <i class="bi bi-funnel"></i> Filter
-                                        </button>
-                                    </div>
+                            <!-- Add New Student Button -->
+                            <div class="col-auto p-0">
+                                <button type="button"
+                                        class="btn btn-dark btn-icon text-white"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#studentModal"
+                                        id="addStudentBtn">
+                                    <i class="bi bi-plus-lg"></i>
+                                    New Student
+                                </button>
+                            </div>
 
-                                  <!-- Print Button -->
-                                    <div class="col-auto p-0">
-                                        <a href="{% url 'export_id_cards' class_id=class_id %}?class={{ request.GET.class }}&section={{ request.GET.section }}&status={{ request.GET.status }}&roll={{ request.GET.roll }}" target="_blank" class="btn btn-soft-base btn-icon">
-                                            <i class="bi bi-printer"></i> Print
-                                        </a>
+                            <!-- Apply Filter Button -->
+                            <div class="col-auto p-0">
+                                <button class="btn btn-dark btn-icon text-white" type="submit" title="Apply">
+                                    <i class="bi bi-funnel"></i> Filter
+                                </button>
+                            </div>
 
-                                    </div>
-                                    
+                            <!-- Print Button -->
+                            <div class="col-auto p-0">
+                                <a href="{% url 'export_id_cards' class_id=class_id %}?class={{ request.GET.class }}&section={{ request.GET.section }}&status={{ request.GET.status }}&roll={{ request.GET.roll }}" target="_blank" class="btn btn-dark btn-icon text-white">
+                                    <i class="bi bi-printer"></i> Print
+                                </a>
+                            </div>
 
+                        </form>
 
-                                </form>
                             </div>
                         </div>
                     </div>
