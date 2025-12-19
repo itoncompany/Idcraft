@@ -15,7 +15,7 @@ from reportlab.pdfbase import pdfmetrics
 from django.conf import settings
 from PIL import Image
 import os
-
+from Authentications.models import Profile
 from MainApps.models import SchoolDetails, Student, IDCardTemplate
 from RatingAndReviews.models import Feedback
 from Authentications.models import ServicePrice, CompanyPaymentDetails
@@ -42,12 +42,16 @@ def service_pricing(request):
         'company_payment_details': company_payment_details
     })
 
-
 def school_dashboard(request):
     user = request.user
+    if not user.is_authenticated:
+        messages.warning(request, "You need to log in to view the school dashboard.")
+        return redirect('home')  # or any URL name for your homepage
+
     school = SchoolDetails.objects.filter(user=user).first()
     if not school:
-        return render(request, "MainApps/error.html", {"message": "No school details found for the logged-in user."})
+        messages.warning(request, "No school details found for the logged-in user.")
+        return redirect('home')
 
     students = school.students.all().order_by('grade', 'section', 'roll')
     context = {
@@ -60,11 +64,17 @@ def school_dashboard(request):
     return render(request, "MainApps/school_dashboard.html", context)
 
 
+
 def grade_list(request):
     user = request.user
+    if not user.is_authenticated:
+        messages.warning(request, "You need to log in to view the grade list.")
+        return redirect('home')
+
     school = SchoolDetails.objects.filter(user=user).first()
     if not school:
-        return render(request, "MainApps/error.html", {"message": "No school details found for the logged-in user."})
+        messages.warning(request, "No school details found for the logged-in user.")
+        return redirect('home')
 
     students = school.students.all().order_by('grade', 'section', 'roll')
     context = {
@@ -276,6 +286,9 @@ def export_id_cards(request, class_id=None):
     if section_filter:
         students = students.filter(section=section_filter)
 
+    if status_filter := request.GET.get('status'):
+        students = students.filter(status=status_filter)
+
     roll_filter = request.GET.get('roll')
     if roll_filter:
         students = students.filter(roll__icontains=roll_filter)
@@ -394,3 +407,65 @@ def export_id_cards(request, class_id=None):
 
     c.save()
     return response
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@login_required
+def update_school(request):
+    user = request.user
+    school, _ = SchoolDetails.objects.get_or_create(user=user)
+
+    if request.method == "POST":
+        school.school_name = request.POST.get("school_name", school.school_name)
+        if request.FILES.get("school_logo"):
+            school.school_logo = request.FILES["school_logo"]
+        if request.FILES.get("school_image"):
+            school.school_image = request.FILES["school_image"]
+        school.address = request.POST.get("address", school.address)
+        school.contact_email = request.POST.get("contact_email", school.contact_email)
+        school.contact_phone = request.POST.get("contact_phone", school.contact_phone)
+        school.website = request.POST.get("website", school.website)
+        school.save()
+        return redirect("home")  # or reload page
+
+    return render(request, "update_school_modal.html", {"school": school})
+
+
+@login_required
+def update_profile(request):
+    user = request.user
+    profile, _ = Profile.objects.get_or_create(user=user)
+
+    if request.method == "POST":
+        profile.full_name = request.POST.get("full_name", profile.full_name)
+        profile.ph_num = request.POST.get("ph_num", profile.ph_num)
+        if request.FILES.get("pr_pic"):
+            profile.pr_pic = request.FILES["pr_pic"]
+        profile.bio = request.POST.get("bio", profile.bio)
+        profile.address = request.POST.get("profile_address", profile.address)
+        profile.city = request.POST.get("city", profile.city)
+        profile.dob = request.POST.get("dob", profile.dob)
+        profile.gender = request.POST.get("gender", profile.gender)
+        profile.website = request.POST.get("profile_website", profile.website)
+        profile.save()
+        return redirect("home")  # or reload page
+
+    return render(request, "update_profile_modal.html", {"profile": profile})

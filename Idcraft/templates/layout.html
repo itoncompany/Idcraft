@@ -9,7 +9,7 @@
         <meta name="description" content="" />
         <meta name="author" content="" />
         <title>{{ company.app_name | capfirst }} - {% block title %} {% endblock %}</title>
-        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <link rel="icon" type="image/x-icon" href="{{company.logo.url}}" />
         <!-- Bootstrap icons-->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
         <!-- Google fonts-->
@@ -31,8 +31,8 @@
                 <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'home' %}">
                     {% if company.logo %}
                         <img src="{{ company.logo.url }}" alt="{{ company.company_name }}" 
-                            style="height:30px; width:auto; object-fit:contain;">
-                            <span class="fw-bold">{{ company.app_name }}</span>
+                            style="height:20px; width:auto; object-fit:contain;">
+                            <span class="fw-bold " style="font-size: 1.2em;">{{ company.app_name }}</span>
                     {% else %}
                         <!-- fallback text if no logo -->
                         <span class="fw-bold">{{ company.app_name }}</span>
@@ -49,71 +49,90 @@
 
                 <!-- Navbar links -->
                 <div class="collapse navbar-collapse" id="navbarResponsive">
-                    <ul class="navbar-nav ms-auto me-4 my-3 my-lg-0">
+                   <ul class="navbar-nav ms-auto me-4 my-3 my-lg-0">
                         <li class="nav-item">
                             <a class="nav-link me-lg-3" href="{% url 'service_pricing' %}">
-                                Service Pricing
-                            </a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link me-lg-3" href="#download">
-                                Download
+                                <i class="bi bi-tags me-1"></i> Service Pricing </i>
                             </a>
                         </li>
 
                         <!-- School Dashboard Dropdown -->
-                        <li class="nav-item dropdown">
+                        <li class="nav-item dropdown d-none d-lg-block">
                             <a class="nav-link dropdown-toggle me-lg-3"
                             href="#"
                             id="schoolDashboardDropdown"
                             role="button"
                             data-bs-toggle="dropdown"
                             aria-expanded="false">
-                                School Dashboard
+                                <i class="bi bi-house-door me-1"></i> School Dashboard
                             </a>
 
-                            <ul class="dropdown-menu dropdown-menu-end"
-                                aria-labelledby="schoolDashboardDropdown">
-
+                            <ul class="dropdown-menu" aria-labelledby="schoolDashboardDropdown">
                                 <li>
-                                    <a class="dropdown-item" href="">
-                                    Profile & School Update
+                                    <a class="dropdown-item d-flex justify-content-between align-items-center" 
+                                    href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
+                                        <span><i class="bi bi-person-circle me-1"></i> Update Profile</span>
                                     </a>
                                 </li>
-
                                 <li>
-                                    <a class="dropdown-item" href="">
-                                        Password Change
+                                    <a class="dropdown-item d-flex justify-content-between align-items-center" 
+                                    href="#" data-bs-toggle="modal" data-bs-target="#schoolModal">
+                                        <span><i class="bi bi-building me-1"></i> Update School</span>
                                     </a>
                                 </li>
-
                                 <li>
-                                    <a class="dropdown-item" href="{% url "grade_list" %}">
-                                        Garde List
+                                    <a class="dropdown-item d-flex justify-content-between align-items-center" 
+                                    href="{% url 'grade_list' %}">
+                                        <span><i class="bi bi-card-list me-1"></i> Grade List</span>
                                     </a>
                                 </li>
-
-                               
+                                <li>
+                                    <a class="dropdown-item d-flex justify-content-between align-items-center" 
+                                    href="#" data-bs-toggle="modal" data-bs-target="#passwordModal">
+                                        <span><i class="bi bi-key me-1"></i> Password Change</span>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
+
+                        <!-- Small devices -->
+                        <li class="nav-item d-lg-none">
+                            <a class="dropdown-item d-flex justify-content-between align-items-center" 
+                            href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
+                                <span><i class="bi bi-person-circle me-1"></i> Update Profile</span>
+                            </a>
+                        </li>
+                        <li class="nav-item d-lg-none">
+                            <a class="dropdown-item d-flex justify-content-between align-items-center" 
+                            href="#" data-bs-toggle="modal" data-bs-target="#schoolModal">
+                                <span><i class="bi bi-building me-1"></i> Update School</span>
+                            </a>
+                        </li>
+                        <li class="nav-item d-lg-none">
+                            <a class="dropdown-item d-flex justify-content-between align-items-center" 
+                            href="#" data-bs-toggle="modal" data-bs-target="#passwordModal">
+                                <span><i class="bi bi-key me-1"></i> Password Change</span>
+                            </a>
+                        </li>
                     </ul>
+
 
 
                     <!-- Buttons -->
                     <div class="d-flex gap-2 align-items-center">
 
                         <!-- Feedback Button (always visible) -->
-                        <button class="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+                       <button class="btn btn-dark rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#feedbackModal">
                             <span class="d-flex align-items-center">
                                 <i class="bi-chat-text-fill me-2"></i>
                                 <span class="small">Send Feedback</span>
                             </span>
                         </button>
 
-                        {% if user.is_authenticated %}
+
+                       {% if user.is_authenticated %}
                             <!-- User Info Button -->
-                            <button class="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0 d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#feedbackModal">
+                            <button class="btn btn-dark rounded-pill px-3 mb-2 mb-lg-0 d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#feedbackModal">
                                 {% if user.profile.pr_pic %}
                                     <img src="{{ user.profile.pr_pic.url }}" alt="Profile" class="rounded-circle me-2" width="25" height="25" style="object-fit: cover; border:1px solid white; padding:2px;">
                                 {% else %}
@@ -134,13 +153,14 @@
                             </form>
                         {% else %}
                             <!-- Sign In / Sign Up Button -->
-                            <button class="btn btn-primary rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#signInModal">
+                            <button class="btn btn-dark rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#signInModal">
                                 <span class="d-flex align-items-center">
                                     <i class="bi-person-circle me-2"></i>
                                     <span class="small">Sign In & Sign Up</span>
                                 </span>
                             </button>
                         {% endif %}
+
 
                     </div>
                 </div>
@@ -239,7 +259,7 @@
             {% if company.whatsapp_number %}
                 <a href="https://wa.me/{{ company.whatsapp_number }}" target="_blank"
                 class="position-fixed shadow rounded-circle d-flex align-items-center justify-content-center"
-                style="width:45px; height:45px; background-color:#25D366; bottom:20px; right:20px; z-index:1050;">
+                style="width:45px; height:45px; background-color:black; bottom:20px; right:20px; z-index:1050;">
                     <i class="fab fa-whatsapp text-white fs-4"></i>
                 </a>
             {% endif %}
@@ -357,95 +377,59 @@
             </div>
         </div>
 
-        <!--  Feedback Modal -->
-        <div class="modal fade" id="feedbackModal" tabindex="-1" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+      <!-- Feedback Modal -->
+        <div class="modal fade" id="feedbackModal" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-                    <div class="modal-header bg-dark p-3">
-                        <h5 class="modal-title text-white" id="feedbackModalLabel">Send Feedback</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                    <div class="modal-header -dark p-3">
+                        <h5 class="modal-title text-black">Send Feedback</h5>
+                        <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal"></button>
                     </div>
+
                     <div class="modal-body p-4">
-                        <form id="feedbackForm">
+                        <form method="POST" action="{% url 'submit_feedback' %}">
                             {% csrf_token %}
+
+                            <!-- Rating -->
                             <div class="mb-3 text-center">
-                                <label class="form-label fw-bold">Rating</label>
-                                <div id="ratingStars" class="fs-3 text-dark">
-                                    <i class="bi bi-star" data-value="1"></i>
-                                    <i class="bi bi-star" data-value="2"></i>
-                                    <i class="bi bi-star" data-value="3"></i>
-                                    <i class="bi bi-star" data-value="4"></i>
-                                    <i class="bi bi-star" data-value="5"></i>
+                                <label class="form-label fw-bold d-block">Rating</label>
+
+                                <div class="rating">
+                                    <input type="radio" name="rating" value="5" id="star5">
+                                    <label for="star5">★</label>
+
+                                    <input type="radio" name="rating" value="4" id="star4">
+                                    <label for="star4">★</label>
+
+                                    <input type="radio" name="rating" value="3" id="star3">
+                                    <label for="star3">★</label>
+
+                                    <input type="radio" name="rating" value="2" id="star2">
+                                    <label for="star2">★</label>
+
+                                    <input type="radio" name="rating" value="1" id="star1">
+                                    <label for="star1">★</label>
                                 </div>
-                                <input type="hidden" name="rating" id="ratingValue" value="0">
                             </div>
 
-                            <div class="form-floating mb-2">
-                                <textarea class="form-control" id="comments" name="comments" placeholder="Enter your comments..." style="height: 6rem" maxlength="300"></textarea>
-                                <label for="comments">Comments</label>
-                                <div class="form-text text-end"><span id="charCount">0</span>/300</div>
+                            <!-- Comments -->
+                            <div class="form-floating mb-3">
+                                <textarea class="form-control" name="comments" placeholder="Enter comments"
+                                        style="height: 6rem" maxlength="300"></textarea>
+                                <label>Comments</label>
                             </div>
 
                             <div class="d-flex justify-content-between">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Cancel</button>
                                 <button type="submit" class="btn btn-dark">Submit</button>
                             </div>
                         </form>
                     </div>
+
                 </div>
             </div>
         </div>
-
-        <script>
-            const stars = document.querySelectorAll("#ratingStars i");
-            const ratingInput = document.getElementById("ratingValue");
-            const comments = document.getElementById("comments");
-            const charCount = document.getElementById("charCount");
-
-            // Star rating
-            stars.forEach(star => {
-                star.addEventListener("click", () => {
-                    const value = star.getAttribute("data-value");
-                    ratingInput.value = value;
-                    stars.forEach(s => {
-                        s.classList.toggle("bi-star-fill", s.getAttribute("data-value") <= value);
-                        s.classList.toggle("bi-star", s.getAttribute("data-value") > value);
-                    });
-                });
-            });
-
-            // Character count
-            comments.addEventListener("input", () => {
-                charCount.textContent = comments.value.length;
-            });
-
-            // AJAX form submission
-            document.getElementById("feedbackForm").addEventListener("submit", function(e){
-                e.preventDefault();
-
-                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-                fetch("{% url 'submit_feedback' %}", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": csrfToken,
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    body: `rating=${ratingInput.value}&comments=${encodeURIComponent(comments.value)}`
-                })
-                .then(res => res.json())
-                .then(data => {
-                    alert(data.message); // optional: keep alert for confirmation
-
-                    if (data.success) {
-                        // Redirect to home page after successful submission
-                        window.location.href = '/';
-                    }
-                })
-                .catch(err => console.error("Feedback submission failed:", err));
-            });
-            </script>
-
 
             <!-- Bootstrap Toast Container -->
             <div class="toast-container position-fixed  end-0 p-0" style="z-index: 1100;" style="top: 70px;">
@@ -480,6 +464,158 @@
             });
             </script>
 
+
+
+
+
+
+
+            <!-- update_school_modal.html -->
+            <div class="modal fade" id="schoolModal" tabindex="-1" aria-labelledby="schoolModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="schoolModalLabel">Update School Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" enctype="multipart/form-data" action="{% url 'update_school' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                    <div class="mb-2">
+                        <label>School Name</label>
+                        <input type="text" name="school_name" class="form-control" value="{{ school.school_name }}">
+                    </div>
+                    <div class="mb-2">
+                        <label>School Logo</label>
+                        <input type="file" name="school_logo" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label>School Image</label>
+                        <input type="file" name="school_image" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label>Address</label>
+                        <input type="text" name="address" class="form-control" value="{{ school.address }}">
+                    </div>
+                    <div class="mb-2">
+                        <label>Contact Email</label>
+                        <input type="email" name="contact_email" class="form-control" value="{{ school.contact_email }}">
+                    </div>
+                    <div class="mb-2">
+                        <label>Contact Phone</label>
+                        <input type="text" name="contact_phone" class="form-control" value="{{ school.contact_phone }}">
+                    </div>
+                    <div class="mb-2">
+                        <label>Website</label>
+                        <input type="url" name="website" class="form-control" value="{{ school.website }}">
+                    </div>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-dark">Save Changes</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+            </div>
+
+
+        
+
+        <!-- update_profile_modal.html -->
+        <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="profileModalLabel">Update Profile Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" enctype="multipart/form-data" action="{% url 'update_profile' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                <div class="mb-2">
+                    <label>Full Name</label>
+                    <input type="text" name="full_name" class="form-control" value="{{ profile.full_name }}">
+                </div>
+                <div class="mb-2">
+                    <label>Phone</label>
+                    <input type="text" name="ph_num" class="form-control" value="{{ profile.ph_num }}">
+                </div>
+                <div class="mb-2">
+                    <label>Profile Picture</label>
+                    <input type="file" name="pr_pic" class="form-control">
+                </div>
+                <div class="mb-2">
+                    <label>Bio</label>
+                    <textarea name="bio" class="form-control">{{ profile.bio }}</textarea>
+                </div>
+                <div class="mb-2">
+                    <label>Address</label>
+                    <input type="text" name="profile_address" class="form-control" value="{{ profile.address }}">
+                </div>
+                <div class="mb-2">
+                    <label>City</label>
+                    <input type="text" name="city" class="form-control" value="{{ profile.city }}">
+                </div>
+                <div class="mb-2">
+                    <label>Date of Birth</label>
+                    <input type="date" name="dob" class="form-control" value="{{ profile.dob }}">
+                </div>
+                <div class="mb-2">
+                    <label>Gender</label>
+                    <select name="gender" class="form-control">
+                    <option value="MALE" {% if profile.gender == 'MALE' %}selected{% endif %}>Male</option>
+                    <option value="FEMALE" {% if profile.gender == 'FEMALE' %}selected{% endif %}>Female</option>
+                    <option value="OTHER" {% if profile.gender == 'OTHER' %}selected{% endif %}>Other</option>
+                    </select>
+                </div>
+               
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-dark">Save Changes</button>
+                </div>
+            </form>
+            </div>
+        </div>
+        </div>
+
+
+
+        
+
+        <!-- Password Change Modal -->
+        <div class="modal fade" id="passwordModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Change Password</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{% url 'change_password' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="old_password" class="form-label">Old Password</label>
+                    <input type="password" class="form-control" name="old_password" id="old_password" required>
+                </div>
+                <div class="mb-3">
+                    <label for="new_password" class="form-label">New Password</label>
+                    <input type="password" class="form-control" name="new_password" id="new_password" required>
+                </div>
+                <div class="mb-3">
+                    <label for="confirm_password" class="form-label">Confirm New Password</label>
+                    <input type="password" class="form-control" name="confirm_password" id="confirm_password" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-dark">Change Password</button>
+                </div>
+                </form>
+            </div>
+            </div>
+        </div>
+        </div>
 
 
 

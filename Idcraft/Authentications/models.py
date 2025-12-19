@@ -13,7 +13,6 @@ import os
 
 # Create your models here.
 
-from django.db import models
 
 class CompanyDetails(models.Model):
     app_name = models.CharField(max_length=150)

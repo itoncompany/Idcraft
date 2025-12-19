@@ -21,16 +21,59 @@
                             </p>
 
                            <!-- Call to Action Buttons -->
-                            <div class="d-flex flex-column flex-sm-row align-items-center gap-3">
-                            <div id="download-app-container" class="text-center" style="border:none;">
-                                <!-- Buttons will be inserted here dynamically -->
-                            </div>
+                          <div class="d-flex flex-column flex-sm-row align-items-center gap-3">
+                              <div id="download-app-container" class="text-center" style="border:none;">
+                                  <script>
+                                  document.addEventListener('DOMContentLoaded', function() {
+                                      const container = document.getElementById('download-app-container');
+                                      let buttonHTML = '';
 
-                            <a href="#demo" class="btn btn-outline-primary btn-lg d-inline-block">
-                                Demo
-                            </a>
-                            </div>
+                                      // URLs from Django context
+                                      const androidLink = "{{ company.android_app_file.url }}" || "";
+                                      const iosLink = "{{ company.ios_app_file.url }}" || "";
+                                      const desktopLink = "{{ company.desktop_app_file.url }}" || "";
+                                      const websiteLink = "{{ company.website }}" || "#";
 
+                                      // Detect user platform
+                                      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+                                      if (/windows phone/i.test(userAgent) || /windows/i.test(userAgent)) {
+                                          if(desktopLink){
+                                              buttonHTML = `<a href="${desktopLink}" class="btn btn-dark btn-lg d-flex align-items-center gap-2">
+                                                              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                                                  <path d="M0 3.5L10 2V10H0V3.5ZM12 2V10H24V3.5L12 2ZM0 12V21.5L10 20V12H0ZM12 12V20L24 21.5V12H12Z"/>
+                                                              </svg>
+                                                              Windows
+                                                            </a>`;
+                                          }
+                                      } else if (/android/i.test(userAgent)) {
+                                          if(androidLink){
+                                              buttonHTML = `<a href="${androidLink}" class="btn btn-dark btn-lg">
+                                                              <i class="bi bi-android2"></i> Download for Android
+                                                            </a>`;
+                                          }
+                                      } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                                          if(iosLink){
+                                              buttonHTML = `<a href="${iosLink}" class="btn btn-dark btn-lg">
+                                                              <i class="bi bi-apple"></i> Download for iOS
+                                                            </a>`;
+                                          }
+                                      } else {
+                                          buttonHTML = `<a href="${websiteLink}" class="btn btn-dark btn-lg">
+                                                          <i class="bi bi-globe"></i> Download App
+                                                        </a>`;
+                                      }
+
+                                      container.innerHTML = buttonHTML;
+                                  });
+                                  </script>
+                                  <!-- Buttons will be inserted here dynamically -->
+                              </div>
+
+                              <a href="#demo" class="btn btn-outline-dark btn-lg d-inline-block">
+                                  Demo
+                              </a>
+                          </div>
 
                         </div>
                     </div>
@@ -86,93 +129,137 @@
                 </div>
             </div>
         </header>
-
-        <!-- Reviews Section -->
-        <section id="reviews" style="padding: 4rem 0; background-color: #e0e0e0ff;">
+        <section id="reviews" style="padding:4rem 0;">
           <div class="container">
-            <h2 class="text-center mb-5" style="font-family: 'Arial', sans-serif;">Reviews from Our Clients</h2>
-            <div class="reviews-grid">
 
-              <!-- Single Review Card -->
-            {% for review in ratings %}
-            <div class="review-card">
-              <div class="review-header d-flex align-items-center gap-2">
-                <img src="{{ review.user.profile_image.url|default:'https://randomuser.me/api/portraits/lego/1.jpg' }}" 
-                    alt="{{ review.user.username }}" class="profile-pic rounded-circle" width="40" height="40">
-                <div class="user-info">
-                  <span class="username">
-                    {{ review.user.username }}
-                    {% if review.user.is_verified %}
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" 
-                        class="bi bi-patch-check-fill" viewBox="0 0 16 16">
-                      <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708"/>
-                    </svg>
-                    {% endif %}
-                  </span>
-                  <div class="verified-stars d-flex align-items-center gap-1">
-                    {% if review.user.is_verified %}
-                    <span class="verified text-success">Verified</span>
-                    {% endif %}
-                    <span class="stars text-warning">
-                      {% for i in "12345" %}
-                        {% if forloop.counter <= review.rating %}
-                          ★
-                        {% else %}
-                          ☆
-                        {% endif %}
-                      {% endfor %}
-                    </span>
+            <h2 class="text-center mb-5" style="font-family:Arial,sans-serif;">
+              Reviews from Our Clients
+            </h2>
+
+            <div id="reviewsCarousel"
+                class="carousel slide"
+                data-bs-ride="carousel"
+                data-bs-interval="4000">
+
+              <div class="carousel-inner">
+
+                {% for review in ratings %}
+
+                  {% if forloop.counter0|divisibleby:3 %}
+                  <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <div style="display:flex;gap:20px;justify-content:center;flex-wrap:wrap;">
+                  {% endif %}
+
+                      <!-- Review Card -->
+                      <div style="
+                        background:#fff;
+                        border-radius:12px;
+                        padding:1.2rem;
+                        width:100%;
+                        max-width:320px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.08);
+                      ">
+
+                        <div style="display:flex;align-items:center;gap:10px;">
+                          {% if review.profile_image %}
+                            <img src="{{ review.profile_image.url }}"
+                                style="width:40px;height:40px;border-radius:50%;object-fit:cover;">
+                          {% else %}
+                            <div style="
+                              width:40px;height:40px;
+                              border-radius:50%;
+                              background:#000;
+                              color:#fff;
+                              display:flex;
+                              align-items:center;
+                              justify-content:center;
+                              font-size:14px;
+                            ">
+                              {{ review.name|slice:":1" }} 
+                            </div>
+                          {% endif %}
+
+                          <div>
+                            <strong>{{ review.name }} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-patch-check-fill" viewBox="0 0 16 16">
+                                <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89-.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89.01zm.287 5.984-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7 8.793l2.646-2.647a.5.5 0 0 1 .708.708"/>
+                              </svg></strong>
+
+                            <div style="display:flex;align-items:center;gap:6px;">
+                              {% if review.user.is_verified %}
+                                <span style="color:green;font-size:0.8rem;">Verified</span>
+                              {% endif %}
+
+                              <span style="color:#000;font-size:1.1rem;">
+                                {% for i in "12345" %}
+                                  {% if forloop.counter <= review.rating %}
+                                    ★
+                                  {% else %}
+                                    ☆
+                                  {% endif %}
+                                {% endfor %}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <hr style="margin:8px 0;">
+                        <p style="margin:0;font-size:0.95rem;text-align:justify;">
+                          {{ review.comments|truncatechars:120 }}
+                        </p>
+                      </div>
+
+                  {% if forloop.counter|divisibleby:3 or forloop.last %}
+                    </div>
                   </div>
-                </div>
+                  {% endif %}
+
+                {% endfor %}
+
               </div>
-              <hr style="margin:8px 0;width:100%">
-              <p class="comment" style="text-align:justify;">{{ review.comments }}</p>
-            </div>
-            {% endfor %}
+
+              <!-- Controls -->
+              <button class="carousel-control-prev" type="button"
+                      data-bs-target="#reviewsCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+              </button>
+
+              <button class="carousel-control-next" type="button"
+                      data-bs-target="#reviewsCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+              </button>
 
             </div>
+
           </div>
-        </section>
+    </section>
 
 
 
 
-        <section id="trusted-schools" class="py-2 bg-light">
+       <section id="trusted-schools" class="py-2 bg-light">
           <div class="container text-center">
-            <h2 class="text-dark font-alt mb-2" style="font-size:1rem;">Our Trusted Schools</h2>
+            <h2 class="text-dark font-alt mb-2" style="font-size:1rem;">
+              Our Trusted Clients
+            </h2>
 
             <div class="marquee-wrapper position-relative" style="height:30px;">
               <div class="marquee">
                 <div class="marquee-track">
-                  <span class="school-name">WhiteCrane English Boarding</span>
-                  <span class="school-name">Emrald Academy School</span>
-                  <span class="school-name">Bhupu Sainik School</span>
-                  <span class="school-name">Birgunj Technical School</span>
-                  <span class="school-name">Jeetpur English Public School</span>
-                  <span class="school-name">Evergreen Boarding School</span>
-                  <span class="school-name">Modern Secondary School</span>
-                  <span class="school-name">Kathmandu University</span>
-                  <span class="school-name">Tribhuvan University</span>
-                  <span class="school-name">Apex College</span>
-                  <span class="school-name">National College</span>
-                  <!-- Duplicate for seamless scroll -->
-                  <span class="school-name">WhiteCrane English Boarding</span>
-                  <span class="school-name">Emrald Academy School</span>
-                  <span class="school-name">Bhupu Sainik School</span>
-                  <span class="school-name">Birgunj Technical School</span>
-                  <span class="school-name">Jeetpur English Public School</span>
-                  <span class="school-name">Evergreen Boarding School</span>
-                  <span class="school-name">Modern Secondary School</span>
-                  <span class="school-name">Kathmandu University</span>
-                  <span class="school-name">Tribhuvan University</span>
-                  <span class="school-name">Apex College</span>
-                  <span class="school-name">National College</span>
+                  {% for school in schools %}
+                    <span class="school-name">
+                      {% if school.website %}
+                        <a href="{{ school.website }}" target="_blank" class="text-decoration-none text-dark">
+                          {{ school.school_name }}
+                        </a>
+                      {% else %}
+                        {{ school.school_name }}
+                      {% endif %}
+                      {% if not forloop.last %}, {% endif %}
+                    </span>
+                  {% endfor %}
                 </div>
               </div>
             </div>
           </div>
         </section>
-
-
-
         {% endblock %}

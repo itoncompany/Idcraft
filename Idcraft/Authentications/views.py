@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.models import User
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import PasswordChangeView
+from django.urls import reverse_lazy
 
 # ------------------------------
 # Logout View
@@ -110,3 +113,25 @@ def signin_view(request):
         return redirect("home")
 
     return redirect("/")
+
+def change_password(request):
+    if request.method == "POST":
+        old_password = request.POST.get("old_password")
+        new_password = request.POST.get("new_password")
+        confirm_password = request.POST.get("confirm_password")
+        user = request.user
+
+        if not user.check_password(old_password):
+            messages.error(request, "Old password is incorrect.")
+        elif new_password != confirm_password:
+            messages.error(request, "New passwords do not match.")
+        elif len(new_password) < 6:
+            messages.error(request, "Password must be at least 6 characters.")
+        else:
+            user.set_password(new_password)
+            user.save()
+            update_session_auth_hash(request, user)  # keep user logged in
+            messages.success(request, "Password changed successfully.")
+            return redirect("home")  # or wherever you want
+
+    return redirect("home")  # fallback redirect if GET

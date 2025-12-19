@@ -11809,3 +11809,26 @@ footer a:hover, footer a:active, footer a:focus {
 
 
 
+/* for rating and review */
+
+.rating {
+    direction: rtl;
+    display: inline-flex;
+    gap: 5px;
+}
+
+.rating input {
+    display: none;
+}
+
+.rating label {
+    font-size: 2rem;
+    color: #ccc;
+    cursor: pointer;
+}
+
+.rating input:checked ~ label,
+.rating label:hover,
+.rating label:hover ~ label {
+    color: #000;
+}
