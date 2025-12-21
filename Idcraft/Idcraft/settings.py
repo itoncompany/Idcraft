@@ -13,6 +13,12 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 from pathlib import Path
 from environ import Env
 
+import pymysql
+
+pymysql.version_info = (1, 4, 6, 'final', 0) #(major, minor, micro, releaselevel, serial)
+pymysql.install_as_MySQLdb()
+
+
 env = Env()
 env.read_env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -79,12 +85,27 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Idcraft.wsgi.application'
 
+#deafult database is sqlite3
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+#integrate sql database
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'IDcraft',  # Replace with your database name
+        'USER': 'root',  # Replace with your MySQL username
+        'PASSWORD': 'root',  # Replace with your MySQL password
+        'HOST': 'localhost',  # Or your MySQL host
+        'PORT': '3306',  # Or your MySQL port
     }
 }
+
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -118,6 +139,7 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 SOCIALACCOUNT_LOGIN_ON_GET = True
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
