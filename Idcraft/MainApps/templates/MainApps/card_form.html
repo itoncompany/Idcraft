@@ -12,88 +12,86 @@
 
                     <!-- RESULT HEADER -->
                     <div class="result-header mb-3">
-                        <div class="result-header mb-3">
-                            <div class="row align-items-center">
+                        <div class="row align-items-center">
 
-                                <div class="col-12 col-lg-4 mb-2 mb-lg-0">
-                                    <div class="records">
-                                        Showing:
-                                        <b>{{ students.start_index }}-{{ students.end_index }}</b>
-                                        of <b>{{ students.paginator.count }}</b> results
-                                    </div>
-                                </div>
-
-                                <div class="col-12 col-lg-8 mt-5 mt-lg-0">
-                                    <form method="get" class="row g-2 justify-content-end align-items-center">
-
-                                        <div class="col-6 col-sm-6 col-md-auto">
-                                            <input type="text"
-                                                name="roll"
-                                                class="form-control form-control-sm"
-                                                placeholder="e.g. 1,2,3,4,5"
-                                                value="{{ request.GET.roll }}">
-                                        </div>
-
-                                        <div class="col-6 col-sm-6 col-md-auto">
-                                            <select name="status" class="form-control form-control-sm">
-                                                <option value="">All Status</option>
-                                                {% for key, val in students.paginator.object_list.model.ID_STATUS_CHOICES %}
-                                                    <option value="{{ key }}" {% if request.GET.status == key %}selected{% endif %}>
-                                                        {{ val }}
-                                                    </option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-
-                                        <div class="col-6 col-sm-6 col-md-auto">
-                                            <select name="section" class="form-control form-control-sm">
-                                                <option value="">All Sections</option>
-                                                {% for key, val in section_choices %}
-                                                    <option value="{{ key }}" {% if request.GET.section == key %}selected{% endif %}>
-                                                        {{ val }}
-                                                    </option>
-                                                {% endfor %}
-                                            </select>
-                                        </div>
-
-                                        <div class="col-6 col-sm-6 col-md-auto">
-                                            <select name="sort" class="form-control form-control-sm">
-                                                <option value="">Sort By</option>
-                                                <option value="az" {% if request.GET.sort == 'az' %}selected{% endif %}>Name (A-Z)</option>
-                                                <option value="za" {% if request.GET.sort == 'za' %}selected{% endif %}>Name (Z-A)</option>
-                                                <option value="roll" {% if request.GET.sort == 'roll' %}selected{% endif %}>Roll No</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="col-6 col-sm-6 col-md-auto">
-                                            <button type="button"
-                                                    class="btn btn-dark btn-sm w-100"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#studentModal">
-                                                <i class="bi bi-plus-lg"></i> New Student
-                                            </button>
-                                        </div>
-
-                                        <div class="col-6 col-sm-6 col-md-auto">
-                                            <button type="submit" class="btn btn-dark btn-sm w-100">
-                                                <i class="bi bi-funnel"></i> Filter
-                                            </button>
-                                        </div>
-
-                                        <div class="col-12 col-sm-6 col-md-auto">
-                                            <a href="{% url 'export_id_cards' class_id=class_id %}?section={{ request.GET.section }}&status={{ request.GET.status }}&roll={{ request.GET.roll }}"
-                                            target="_blank"
-                                            class="btn btn-dark btn-sm w-100">
-                                                <i class="bi bi-printer"></i> Print
-                                            </a>
-                                        </div>
-
-                                    </form>
+                            <div class="col-12 col-lg-4 mb-2 mb-lg-0">
+                                <div class="records">
+                                    Showing:
+                                    <b>{{ students.start_index }}-{{ students.end_index }}</b>
+                                    of <b>{{ students.paginator.count }}</b> results
                                 </div>
                             </div>
+
+                            <div class="col-12 col-lg-8 mt-5 mt-lg-0">
+                                <form method="get" class="row g-2 justify-content-end align-items-center">
+
+                                    <div class="col-6 col-sm-6 col-md-auto">
+                                        <input type="text"
+                                            name="roll"
+                                            class="form-control form-control-sm"
+                                            placeholder="e.g. 1,2,3,4,5"
+                                            value="{{ request.GET.roll }}">
+                                    </div>
+
+                                    <div class="col-6 col-sm-6 col-md-auto">
+                                        <select name="status" class="form-control form-control-sm">
+                                            <option value="">All Status</option>
+                                            {% for key, val in students.paginator.object_list.model.ID_STATUS_CHOICES %}
+                                                <option value="{{ key }}" {% if request.GET.status == key %}selected{% endif %}>
+                                                    {{ val }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <div class="col-6 col-sm-6 col-md-auto">
+                                        <select name="section" class="form-control form-control-sm">
+                                            <option value="">All Sections</option>
+                                            {% for key, val in section_choices %}
+                                                <option value="{{ key }}" {% if request.GET.section == key %}selected{% endif %}>
+                                                    {{ val }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <div class="col-6 col-sm-6 col-md-auto">
+                                        <select name="sort" class="form-control form-control-sm">
+                                            <option value="">Sort By</option>
+                                            <option value="az" {% if request.GET.sort == 'az' %}selected{% endif %}>Name (A-Z)</option>
+                                            <option value="za" {% if request.GET.sort == 'za' %}selected{% endif %}>Name (Z-A)</option>
+                                            <option value="roll" {% if request.GET.sort == 'roll' %}selected{% endif %}>Roll No</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-6 col-sm-6 col-md-auto">
+                                        <button type="button"
+                                                id="addStudentBtn"
+                                                class="btn btn-dark btn-sm w-100"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#studentModal">
+                                            <i class="bi bi-plus-lg"></i> New Student
+                                        </button>
+                                    </div>
+
+                                    <div class="col-6 col-sm-6 col-md-auto">
+                                        <button type="submit" class="btn btn-dark btn-sm w-100">
+                                            <i class="bi bi-funnel"></i> Filter
+                                        </button>
+                                    </div>
+
+                                    <div class="col-12 col-sm-6 col-md-auto">
+                                        <a href="{% url 'export_id_cards' class_id=class_id %}?section={{ request.GET.section }}&status={{ request.GET.status }}&roll={{ request.GET.roll }}"
+                                        target="_blank"
+                                        class="btn btn-dark btn-sm w-100">
+                                            <i class="bi bi-printer"></i> Print
+                                        </a>
+                                    </div>
+
+                                </form>
+                            </div>
                         </div>
-
-
+                    </div>
 
                     <!-- RESULT BODY: Table -->
                     <div class="result-body">
@@ -137,8 +135,7 @@
                                                     {% if student.status == 'ACTIVE' %}bg-success{% endif %}
                                                     {% if student.status == 'LOST' %}bg-danger{% endif %}
                                                     {% if student.status == 'NEW' %}bg-warning{% endif %}
-                                                    {% if student.status == 'REISSUED' %}bg-info{% endif %}">
-                                                </i>
+                                                    {% if student.status == 'REISSUED' %}bg-info{% endif %}"></i>
                                                 <span>{{ student.get_status_display }}</span>
                                             </div>
                                         </td>
@@ -158,8 +155,8 @@
                                                 data-parent_name="{{ student.parent_name }}"
                                                 data-parent_phone="{{ student.parent_phone }}"
                                                 data-address="{{ student.address }}"
-                                                data-dob="{{ student.dob }}"
-                                                data-valid_until="{{ student.valid_until }}">
+                                                data-dob="{{ student.dob|date:'Y-m-d' }}"
+                                                data-valid_until="{{ student.valid_until|date:'Y-m-d' }}">
                                                 <i class="bi bi-pencil-square"></i>
                                             </button>
 
@@ -182,29 +179,33 @@
                         </div>
                     </div>
 
-                    <!-- Pagination -->
+                   <!-- Dark Pagination -->
                     <nav class="d-flex justify-content-center mt-3">
-                        <ul class="pagination pagination-base pagination-boxed pagination-square mb-0">
+                        <ul class="pagination pagination-dark pagination-base pagination-boxed pagination-square mb-0">
                             {% if students.has_previous %}
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ students.previous_page_number }}">&laquo; Previous</a>
+                                <a class="page-link bg-dark text-white" href="?page={{ students.previous_page_number }}">&laquo; Previous</a>
                             </li>
                             {% else %}
-                            <li class="page-item disabled"><span class="page-link">&laquo; Previous</span></li>
+                            <li class="page-item disabled">
+                                <span class="page-link bg-dark text-white">&laquo; Previous</span>
+                            </li>
                             {% endif %}
 
                             {% for num in students.paginator.page_range %}
                             <li class="page-item {% if students.number == num %}active{% endif %}">
-                                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                <a class="page-link {% if students.number == num %}bg-black text-white{% else %}bg-dark text-white{% endif %}" href="?page={{ num }}">{{ num }}</a>
                             </li>
                             {% endfor %}
 
                             {% if students.has_next %}
                             <li class="page-item">
-                                <a class="page-link" href="?page={{ students.next_page_number }}">Next &raquo;</a>
+                                <a class="page-link bg-dark text-white" href="?page={{ students.next_page_number }}">Next &raquo;</a>
                             </li>
                             {% else %}
-                            <li class="page-item disabled"><span class="page-link">Next &raquo;</span></li>
+                            <li class="page-item disabled">
+                                <span class="page-link bg-dark text-white">Next &raquo;</span>
+                            </li>
                             {% endif %}
                         </ul>
                     </nav>
@@ -320,11 +321,12 @@
 </div>
 
 
-<!-- JS: Populate Modal for Edit -->
+<!-- JS: Populate Modal for Add/Edit -->
 <script>
 const form = document.getElementById('studentForm');
 const modalTitle = document.getElementById('modalTitle');
 
+// Add Student Button
 document.getElementById('addStudentBtn').addEventListener('click', () => {
     modalTitle.innerText = 'Add Student';
     form.action = "{% url 'add_student' %}";
@@ -332,6 +334,7 @@ document.getElementById('addStudentBtn').addEventListener('click', () => {
     document.getElementById('studentId').value = '';
 });
 
+// Edit Student Buttons
 document.querySelectorAll('.edit-btn').forEach(btn => {
     btn.addEventListener('click', function () {
         modalTitle.innerText = 'Edit Student';
@@ -349,8 +352,8 @@ document.querySelectorAll('.edit-btn').forEach(btn => {
         document.getElementById('address').value = this.dataset.address;
 
         // DOB and Valid Until
-        if (this.dataset.dob) document.getElementById('dob').value = this.dataset.dob;
-        if (this.dataset.valid_until) document.getElementById('validUntil').value = this.dataset.valid_until;
+        document.getElementById('dob').value = this.dataset.dob || '';
+        document.getElementById('validUntil').value = this.dataset.valid_until || '';
     });
 });
 </script>

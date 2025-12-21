@@ -4,6 +4,7 @@ from django.db.models import Q
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.core.files.base import ContentFile
 from datetime import datetime
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import landscape, A4
@@ -14,6 +15,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
 from django.conf import settings
 from PIL import Image
+from io import BytesIO
 import os
 from Authentications.models import Profile
 from MainApps.models import SchoolDetails, Student, IDCardTemplate
@@ -133,6 +135,8 @@ def card_form(request, class_id=None):
     return render(request, "MainApps/card_form.html", context)
 
 
+
+
 @login_required
 def add_student(request):
     if request.method == 'POST':
@@ -160,15 +164,34 @@ def add_student(request):
             status=request.POST.get('status', 'NEW'),
         )
 
+        # Resize and compress photo if uploaded
         if request.FILES.get('photo'):
-            student.photo = request.FILES['photo']
+            image = request.FILES['photo']
+            img = Image.open(image)
+            img_format = img.format or 'JPEG'
+
+            # Resize image if larger than 800x800 while maintaining aspect ratio
+            max_size = (800, 800)
+            img.thumbnail(max_size, Image.Resampling.LANCZOS)
+
+            # Compress to target size (~400 KB)
+            buffer = BytesIO()
+            quality = 85
+            img.save(buffer, format=img_format, optimize=True, quality=quality)
+
+            while buffer.tell() > 400 * 1024 and quality > 20:
+                buffer.seek(0)
+                buffer.truncate()
+                quality -= 5
+                img.save(buffer, format=img_format, optimize=True, quality=quality)
+
+            # Save compressed image to student.photo
+            student.photo.save(image.name, ContentFile(buffer.getvalue()), save=False)
 
         student.save()
         messages.success(request, f"{student.full_name} added successfully!")
 
     return redirect(request.META.get('HTTP_REFERER', 'students_list'))
-
-
 
 
 @login_required
