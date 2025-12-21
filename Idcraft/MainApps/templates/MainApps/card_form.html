@@ -12,88 +12,87 @@
 
                     <!-- RESULT HEADER -->
                     <div class="result-header mb-3">
-                        <div class="row align-items-center">
-                            <div class="col-12 col-lg-4 mb-2 mb-lg-0">
-                                <div class="records">
-                                    Showing: <b>{{ students.start_index }}-{{ students.end_index }}</b> of <b>{{ students.paginator.count }}</b> results
+                        <div class="result-header mb-3">
+                            <div class="row align-items-center">
+
+                                <div class="col-12 col-lg-4 mb-2 mb-lg-0">
+                                    <div class="records">
+                                        Showing:
+                                        <b>{{ students.start_index }}-{{ students.end_index }}</b>
+                                        of <b>{{ students.paginator.count }}</b> results
+                                    </div>
+                                </div>
+
+                                <div class="col-12 col-lg-8 mt-5 mt-lg-0">
+                                    <form method="get" class="row g-2 justify-content-end align-items-center">
+
+                                        <div class="col-6 col-sm-6 col-md-auto">
+                                            <input type="text"
+                                                name="roll"
+                                                class="form-control form-control-sm"
+                                                placeholder="e.g. 1,2,3,4,5"
+                                                value="{{ request.GET.roll }}">
+                                        </div>
+
+                                        <div class="col-6 col-sm-6 col-md-auto">
+                                            <select name="status" class="form-control form-control-sm">
+                                                <option value="">All Status</option>
+                                                {% for key, val in students.paginator.object_list.model.ID_STATUS_CHOICES %}
+                                                    <option value="{{ key }}" {% if request.GET.status == key %}selected{% endif %}>
+                                                        {{ val }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        <div class="col-6 col-sm-6 col-md-auto">
+                                            <select name="section" class="form-control form-control-sm">
+                                                <option value="">All Sections</option>
+                                                {% for key, val in section_choices %}
+                                                    <option value="{{ key }}" {% if request.GET.section == key %}selected{% endif %}>
+                                                        {{ val }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        <div class="col-6 col-sm-6 col-md-auto">
+                                            <select name="sort" class="form-control form-control-sm">
+                                                <option value="">Sort By</option>
+                                                <option value="az" {% if request.GET.sort == 'az' %}selected{% endif %}>Name (A-Z)</option>
+                                                <option value="za" {% if request.GET.sort == 'za' %}selected{% endif %}>Name (Z-A)</option>
+                                                <option value="roll" {% if request.GET.sort == 'roll' %}selected{% endif %}>Roll No</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-6 col-sm-6 col-md-auto">
+                                            <button type="button"
+                                                    class="btn btn-dark btn-sm w-100"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#studentModal">
+                                                <i class="bi bi-plus-lg"></i> New Student
+                                            </button>
+                                        </div>
+
+                                        <div class="col-6 col-sm-6 col-md-auto">
+                                            <button type="submit" class="btn btn-dark btn-sm w-100">
+                                                <i class="bi bi-funnel"></i> Filter
+                                            </button>
+                                        </div>
+
+                                        <div class="col-12 col-sm-6 col-md-auto">
+                                            <a href="{% url 'export_id_cards' class_id=class_id %}?section={{ request.GET.section }}&status={{ request.GET.status }}&roll={{ request.GET.roll }}"
+                                            target="_blank"
+                                            class="btn btn-dark btn-sm w-100">
+                                                <i class="bi bi-printer"></i> Print
+                                            </a>
+                                        </div>
+
+                                    </form>
                                 </div>
                             </div>
-                            <div class="col-12 col-lg-8">
-                                <form method="get" class="result-actions d-flex flex-wrap justify-content-end gap-2">
-
-   
-
-                            <!-- Roll search -->
-                            <div class="col-12 col-sm-6 col-md-auto p-0">
-                                <input type="text"
-                                    name="roll"
-                                    value="{{ request.GET.roll }}"
-                                    class="form-control form-control-sm"
-                                    placeholder="Search Roll No"
-                                    style="min-width:120px;">
-                            </div>
-
-                            <!-- Status filter -->
-                            <div class="col-12 col-sm-6 col-md-auto p-0">
-                                <select name="status" class="form-control form-control-sm" style="min-width:120px;">
-                                    <option value="">All Status</option>
-                                    {% for key, val in students.paginator.object_list.model.ID_STATUS_CHOICES %}
-                                        <option value="{{ key }}" {% if request.GET.status == key %}selected{% endif %}>{{ val }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-
-                            <!-- Section filter -->
-                            <div class="col-12 col-sm-6 col-md-auto p-0">
-                                <select name="section" class="form-control form-control-sm" style="min-width:100px;">
-                                    <option value="">All Sections</option>
-                                    {% for key, val in section_choices %}
-                                        <option value="{{ key }}" {% if request.GET.section == key %}selected{% endif %}>{{ val }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-
-                            <!-- Sort filter -->
-                            <div class="col-12 col-sm-6 col-md-auto p-0">
-                                <select name="sort" class="form-control form-control-sm" style="min-width:120px;">
-                                    <option value="">Sort By</option>
-                                    <option value="az" {% if request.GET.sort == 'az' %}selected{% endif %}>Name (A-Z)</option>
-                                    <option value="za" {% if request.GET.sort == 'za' %}selected{% endif %}>Name (Z-A)</option>
-                                    <option value="roll" {% if request.GET.sort == 'roll' %}selected{% endif %}>Roll No</option>
-                                </select>
-                            </div>
-
-                            <!-- Add New Student Button -->
-                            <div class="col-auto p-0">
-                                <button type="button"
-                                        class="btn btn-dark btn-icon text-white"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#studentModal"
-                                        id="addStudentBtn">
-                                    <i class="bi bi-plus-lg"></i>
-                                    New Student
-                                </button>
-                            </div>
-
-                            <!-- Apply Filter Button -->
-                            <div class="col-auto p-0">
-                                <button class="btn btn-dark btn-icon text-white" type="submit" title="Apply">
-                                    <i class="bi bi-funnel"></i> Filter
-                                </button>
-                            </div>
-
-                            <!-- Print Button -->
-                            <div class="col-auto p-0">
-                                <a href="{% url 'export_id_cards' class_id=class_id %}?class={{ request.GET.class }}&section={{ request.GET.section }}&status={{ request.GET.status }}&roll={{ request.GET.roll }}" target="_blank" class="btn btn-dark btn-icon text-white">
-                                    <i class="bi bi-printer"></i> Print
-                                </a>
-                            </div>
-
-                        </form>
-
-                            </div>
                         </div>
-                    </div>
+
 
 
                     <!-- RESULT BODY: Table -->
@@ -146,7 +145,7 @@
                                         <td>{{ student.created_at|date:"M d, Y" }}</td>
                                         <td class="d-flex gap-1">
                                             <!-- Edit -->
-                                            <button type="button" class="btn btn-sm btn-outline-primary edit-btn"
+                                            <button type="button" class="btn btn-sm btn-dark edit-btn"
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#studentModal"
                                                 data-id="{{ student.id }}"
@@ -167,7 +166,7 @@
                                             <!-- Delete -->
                                             <form method="post" action="{% url 'delete_student' student.id %}" onsubmit="return confirm('Are you sure?');">
                                                 {% csrf_token %}
-                                                <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <button type="submit" class="btn btn-sm btn-dark">
                                                     <i class="bi bi-trash"></i>
                                                 </button>
                                             </form>
@@ -235,53 +234,51 @@
 
                         <div class="col-md-6">
                             <label class="form-label small">Full Name</label>
-                            <input type="text" name="full_name" id="fullName" class="form-control form-control-sm">
+                            <input type="text" name="full_name" id="fullName" class="form-control form-control-sm" required>
                         </div>
 
                         <div class="col-md-3">
                             <label class="form-label small">Roll</label>
-                            <input type="text" name="roll" id="roll" class="form-control form-control-sm">
+                            <input type="text" name="roll" id="roll" class="form-control form-control-sm" required>
                         </div>
 
                         <div class="col-md-3">
                             <label class="form-label small">Gender</label>
-                            <select name="gender" id="gender" class="form-control form-control-sm">
-                                {% for k,v in gender_choices %}
-                                <option value="{{ k }}">{{ v }}</option>
+                            <select name="gender" id="gender" class="form-control form-control-sm" required>
+                                {% for k, v in gender_choices %}
+                                    <option value="{{ k }}">{{ v }}</option>
                                 {% endfor %}
                             </select>
                         </div>
 
                         <div class="col-md-4">
                             <label class="form-label small">Grade</label>
-                            <select name="grade" id="grade" class="form-control form-control-sm">
-                               
-                                <option value="{{class_id}}">{{ class_id }}</option>
-                              
+                            <select name="grade" id="grade" class="form-control form-control-sm" required>
+                                <option value="{{ class_id }}">{{ class_id }}</option>
                             </select>
                         </div>
 
                         <div class="col-md-4">
                             <label class="form-label small">Section</label>
-                            <select name="section" id="section" class="form-control form-control-sm">
-                                {% for k,v in section_choices %}
-                                <option value="{{ k }}">{{ v }}</option>
+                            <select name="section" id="section" class="form-control form-control-sm" required>
+                                {% for k, v in section_choices %}
+                                    <option value="{{ k }}">{{ v }}</option>
                                 {% endfor %}
                             </select>
                         </div>
 
                         <div class="col-md-4">
                             <label class="form-label small">Status</label>
-                            <select name="status" id="status" class="form-control form-control-sm">
-                                {% for k,v in students.paginator.object_list.model.ID_STATUS_CHOICES %}
-                                <option value="{{ k }}">{{ v }}</option>
+                            <select name="status" id="status" class="form-control form-control-sm" required>
+                                {% for k, v in students.paginator.object_list.model.ID_STATUS_CHOICES %}
+                                    <option value="{{ k }}">{{ v }}</option>
                                 {% endfor %}
                             </select>
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label small">DOB</label>
-                            <input type="date" name="dob" id="dob" class="form-control form-control-sm">
+                            <input type="date" name="dob" id="dob" class="form-control form-control-sm" required>
                         </div>
 
                         <div class="col-md-6">
@@ -291,22 +288,22 @@
 
                         <div class="col-md-6">
                             <label class="form-label small">Parent Name</label>
-                            <input type="text" name="parent_name" id="parentName" class="form-control form-control-sm">
+                            <input type="text" name="parent_name" id="parentName" class="form-control form-control-sm" required>
                         </div>
 
                         <div class="col-md-6">
                             <label class="form-label small">Parent Phone</label>
-                            <input type="text" name="parent_phone" id="parentPhone" class="form-control form-control-sm">
+                            <input type="text" name="parent_phone" id="parentPhone" class="form-control form-control-sm" required>
                         </div>
 
                         <div class="col-md-12">
                             <label class="form-label small">Address</label>
-                            <textarea name="address" id="address" class="form-control form-control-sm"></textarea>
+                            <textarea name="address" id="address" class="form-control form-control-sm" rows="2" required></textarea>
                         </div>
 
                         <div class="col-md-12">
                             <label class="form-label small">Photo</label>
-                            <input type="file" name="photo" id="photo" class="form-control form-control-sm">
+                            <input type="file" name="photo" id="photo" accept="image/*" class="form-control form-control-sm">
                         </div>
 
                     </div>
@@ -314,13 +311,14 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-light btn-sm" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                    <button type="submit" class="btn btn-dark btn-sm">Save</button>
                 </div>
             </form>
 
         </div>
     </div>
 </div>
+
 
 <!-- JS: Populate Modal for Edit -->
 <script>

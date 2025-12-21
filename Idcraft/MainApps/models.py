@@ -145,128 +145,179 @@ class Student(models.Model):
 
 
 
-
 class IDCardTemplate(models.Model):
-    CARD_CHOICES=[
-        ('LOST','Lost'),
-        ('RENEW','Renew'),
-        ('New','New')
-    ]
-    school= models.ForeignKey(SchoolDetails, on_delete=models.CASCADE, related_name='id_card_templates')
-    name = models.CharField(max_length=100, help_text="Template name, e.g., 'Standard', 'Premium'")
+    CARD_CHOICES = [('LOST','Lost'), ('RENEW','Renew'), ('NEW','New')]
+    
+    school = models.ForeignKey('SchoolDetails', on_delete=models.CASCADE, related_name='id_card_templates')
     template_image = models.ImageField(upload_to='id_card_templates/', blank=True, null=True, help_text="Background image of the ID card template")
 
     # ------------------ Photo ------------------
-    photo_x = models.IntegerField(default=0, help_text="Photo X-coordinate")
-    photo_y = models.IntegerField(default=0, help_text="Photo Y-coordinate")
-    photo_width = models.IntegerField(default=80)
-    photo_height = models.IntegerField(default=100)
+    photo_x = models.IntegerField(default=42)
+    photo_y = models.IntegerField(default=127)
+    photo_width = models.IntegerField(default=71)
+    photo_height = models.IntegerField(default=71)
     photo_alignment = models.CharField(max_length=10, choices=[('left','Left'),('center','Center'),('right','Right')], default='center')
+    photo_tag = models.CharField(max_length=50, default="Photo")
+    photo_tag_active = models.BooleanField(default=True)
+    photo_value_active = models.BooleanField(default=True)
+    photo_tag_color = models.CharField(max_length=7, default="#000000")
+    photo_value_color = models.CharField(max_length=7, default="#000000")
 
-    # ------------------ Text Fields ------------------
-    # Full Name
+    # ------------------ Full Name ------------------
     full_name_x = models.IntegerField(default=20)
-    full_name_y = models.IntegerField(default=30)
-    full_name_font_size = models.IntegerField(default=16)
-    full_name_font_color = models.CharField(max_length=7, default="#000000")
-    full_name_font_family = models.CharField(max_length=50, default="Arial")
+    full_name_y = models.IntegerField(default=100)
+    full_name_font_size = models.IntegerField(default=12)
+    full_name_font_family = models.CharField(max_length=50, default="Verdana")
     full_name_alignment = models.CharField(max_length=10, choices=[('left','Left'),('center','Center'),('right','Right')], default='left')
+    full_name_tag = models.CharField(max_length=50, default="Full Name")
+    full_name_tag_active = models.BooleanField(default=True)
+    full_name_value_active = models.BooleanField(default=True)
+    full_name_tag_color = models.CharField(max_length=7, default="#333333")
+    full_name_value_color = models.CharField(max_length=7, default="#333333")
 
-    # Roll Number
+    # ------------------ Roll Number ------------------
     roll_x = models.IntegerField(default=20)
-    roll_y = models.IntegerField(default=60)
-    roll_font_size = models.IntegerField(default=14)
-    roll_font_color = models.CharField(max_length=7, default="#333333")
+    roll_y = models.IntegerField(default=90)
+    roll_font_size = models.IntegerField(default=8)
     roll_font_family = models.CharField(max_length=50, default="Verdana")
     roll_alignment = models.CharField(max_length=10, choices=[('left','Left'),('center','Center'),('right','Right')], default='left')
+    roll_tag = models.CharField(max_length=50, default="Roll Number")
+    roll_tag_active = models.BooleanField(default=True)
+    roll_value_active = models.BooleanField(default=True)
+    roll_tag_color = models.CharField(max_length=7, default="#333333")
+    roll_value_color = models.CharField(max_length=7, default="#333333")
 
-    # Date of Birth
+    # ------------------ Date of Birth ------------------
     dob_x = models.IntegerField(default=20)
     dob_y = models.IntegerField(default=80)
     dob_font_size = models.IntegerField(default=14)
-    dob_font_color = models.CharField(max_length=7, default="#333333")
     dob_font_family = models.CharField(max_length=50, default="Verdana")
     dob_alignment = models.CharField(max_length=10, choices=[('left','Left'),('center','Center'),('right','Right')], default='left')
+    dob_tag = models.CharField(max_length=50, default="Date of Birth")
+    dob_tag_active = models.BooleanField(default=True)
+    dob_value_active = models.BooleanField(default=True)
+    dob_tag_color = models.CharField(max_length=7, default="#333333")
+    dob_value_color = models.CharField(max_length=7, default="#333333")
 
-    # Gender
+    # ------------------ Gender ------------------
     gender_x = models.IntegerField(default=20)
     gender_y = models.IntegerField(default=100)
-    gender_font_size = models.IntegerField(default=14)
-    gender_font_color = models.CharField(max_length=7, default="#333333")
+    gender_font_size = models.IntegerField(default=8)
     gender_font_family = models.CharField(max_length=50, default="Verdana")
     gender_alignment = models.CharField(max_length=10, choices=[('left','Left'),('center','Center'),('right','Right')], default='left')
+    gender_tag = models.CharField(max_length=50, default="Gender")
+    gender_tag_active = models.BooleanField(default=True)
+    gender_value_active = models.BooleanField(default=True)
+    gender_tag_color = models.CharField(max_length=7, default="#333333")
+    gender_value_color = models.CharField(max_length=7, default="#333333")
 
-    # Email
+    # ------------------ Email ------------------
     email_x = models.IntegerField(default=20)
     email_y = models.IntegerField(default=120)
     email_font_size = models.IntegerField(default=12)
-    email_font_color = models.CharField(max_length=7, default="#333333")
     email_font_family = models.CharField(max_length=50, default="Verdana")
     email_alignment = models.CharField(max_length=10, choices=[('left','Left'),('center','Center'),('right','Right')], default='left')
+    email_tag = models.CharField(max_length=50, default="Email")
+    email_tag_active = models.BooleanField(default=True)
+    email_value_active = models.BooleanField(default=True)
+    email_tag_color = models.CharField(max_length=7, default="#333333")
+    email_value_color = models.CharField(max_length=7, default="#333333")
 
-    # Student Phone
+    # ------------------ Student Phone ------------------
     student_phone_x = models.IntegerField(default=20)
     student_phone_y = models.IntegerField(default=140)
     student_phone_font_size = models.IntegerField(default=12)
-    student_phone_font_color = models.CharField(max_length=7, default="#333333")
     student_phone_font_family = models.CharField(max_length=50, default="Verdana")
     student_phone_alignment = models.CharField(max_length=10, choices=[('left','Left'),('center','Center'),('right','Right')], default='left')
+    student_phone_tag = models.CharField(max_length=50, default="Student Phone")
+    student_phone_tag_active = models.BooleanField(default=True)
+    student_phone_value_active = models.BooleanField(default=True)
+    student_phone_tag_color = models.CharField(max_length=7, default="#333333")
+    student_phone_value_color = models.CharField(max_length=7, default="#333333")
 
-    # Parent Name
+    # ------------------ Parent Name ------------------
     parent_name_x = models.IntegerField(default=20)
-    parent_name_y = models.IntegerField(default=160)
-    parent_name_font_size = models.IntegerField(default=12)
-    parent_name_font_color = models.CharField(max_length=7, default="#333333")
+    parent_name_y = models.IntegerField(default=50)
+    parent_name_font_size = models.IntegerField(default=8)
     parent_name_font_family = models.CharField(max_length=50, default="Verdana")
     parent_name_alignment = models.CharField(max_length=10, choices=[('left','Left'),('center','Center'),('right','Right')], default='left')
+    parent_name_tag = models.CharField(max_length=50, default="Parent Name")
+    parent_name_tag_active = models.BooleanField(default=True)
+    parent_name_value_active = models.BooleanField(default=True)
+    parent_name_tag_color = models.CharField(max_length=7, default="#333333")
+    parent_name_value_color = models.CharField(max_length=7, default="#333333")
 
-    # Parent Phone
+    # ------------------ Parent Phone ------------------
     parent_phone_x = models.IntegerField(default=20)
-    parent_phone_y = models.IntegerField(default=180)
-    parent_phone_font_size = models.IntegerField(default=12)
-    parent_phone_font_color = models.CharField(max_length=7, default="#333333")
+    parent_phone_y = models.IntegerField(default=60)
+    parent_phone_font_size = models.IntegerField(default=8)
     parent_phone_font_family = models.CharField(max_length=50, default="Verdana")
     parent_phone_alignment = models.CharField(max_length=10, choices=[('left','Left'),('center','Center'),('right','Right')], default='left')
+    parent_phone_tag = models.CharField(max_length=50, default="Parent Phone")
+    parent_phone_tag_active = models.BooleanField(default=True)
+    parent_phone_value_active = models.BooleanField(default=True)
+    parent_phone_tag_color = models.CharField(max_length=7, default="#333333")
+    parent_phone_value_color = models.CharField(max_length=7, default="#333333")
 
-    # Address
+    # ------------------ Address ------------------
     address_x = models.IntegerField(default=20)
-    address_y = models.IntegerField(default=200)
-    address_font_size = models.IntegerField(default=12)
-    address_font_color = models.CharField(max_length=7, default="#333333")
+    address_y = models.IntegerField(default=40)
+    address_font_size = models.IntegerField(default=8)
     address_font_family = models.CharField(max_length=50, default="Verdana")
     address_alignment = models.CharField(max_length=10, choices=[('left','Left'),('center','Center'),('right','Right')], default='left')
+    address_tag = models.CharField(max_length=50, default="Address")
+    address_tag_active = models.BooleanField(default=True)
+    address_value_active = models.BooleanField(default=True)
+    address_tag_color = models.CharField(max_length=7, default="#333333")
+    address_value_color = models.CharField(max_length=7, default="#333333")
 
-    # School Name
-    school_x = models.IntegerField(default=20)
-    school_y = models.IntegerField(default=220)
-    school_font_size = models.IntegerField(default=12)
-    school_font_color = models.CharField(max_length=7, default="#333333")
-    school_font_family = models.CharField(max_length=50, default="Verdana")
-    school_alignment = models.CharField(max_length=10, choices=[('left','Left'),('center','Center'),('right','Right')], default='left')
+    # ------------------ School Name ------------------
+    school_name_x = models.IntegerField(default=20)
+    school_name_y = models.IntegerField(default=220)
+    school_name_font_size = models.IntegerField(default=10)
+    school_name_font_family = models.CharField(max_length=50, default="Verdana")
+    school_name_alignment = models.CharField(max_length=10, choices=[('left','Left'),('center','Center'),('right','Right')], default='left')
+    school_name_tag = models.CharField(max_length=50, default="School Name")
+    school_name_tag_active = models.BooleanField(default=True)
+    school_name_value_active = models.BooleanField(default=True)
+    school_name_tag_color = models.CharField(max_length=7, default="#333333")
+    school_name_value_color = models.CharField(max_length=7, default="#333333")
 
-    # Grade/Class
+    # ------------------ Grade/Class ------------------
     grade_x = models.IntegerField(default=20)
-    grade_y = models.IntegerField(default=240)
-    grade_font_size = models.IntegerField(default=12)
-    grade_font_color = models.CharField(max_length=7, default="#333333")
+    grade_y = models.IntegerField(default=70)
+    grade_font_size = models.IntegerField(default=8)
     grade_font_family = models.CharField(max_length=50, default="Verdana")
     grade_alignment = models.CharField(max_length=10, choices=[('left','Left'),('center','Center'),('right','Right')], default='left')
+    grade_tag = models.CharField(max_length=50, default="Grade/Class")
+    grade_tag_active = models.BooleanField(default=True)
+    grade_value_active = models.BooleanField(default=True)
+    grade_tag_color = models.CharField(max_length=7, default="#333333")
+    grade_value_color = models.CharField(max_length=7, default="#333333")
 
-    # Section
+    # ------------------ Section ------------------
     section_x = models.IntegerField(default=20)
-    section_y = models.IntegerField(default=260)
-    section_font_size = models.IntegerField(default=12)
-    section_font_color = models.CharField(max_length=7, default="#333333")
+    section_y = models.IntegerField(default=69)
+    section_font_size = models.IntegerField(default=8)
     section_font_family = models.CharField(max_length=50, default="Verdana")
     section_alignment = models.CharField(max_length=10, choices=[('left','Left'),('center','Center'),('right','Right')], default='left')
+    section_tag = models.CharField(max_length=50, default="Section")
+    section_tag_active = models.BooleanField(default=True)
+    section_value_active = models.BooleanField(default=True)
+    section_tag_color = models.CharField(max_length=7, default="#333333")
+    section_value_color = models.CharField(max_length=7, default="#333333")
 
-    # Valid Until
+    # ------------------ Valid Until ------------------
     valid_until_x = models.IntegerField(default=20)
-    valid_until_y = models.IntegerField(default=280)
-    valid_until_font_size = models.IntegerField(default=12)
-    valid_until_font_color = models.CharField(max_length=7, default="#333333")
+    valid_until_y = models.IntegerField(default=30)
+    valid_until_font_size = models.IntegerField(default=8)
     valid_until_font_family = models.CharField(max_length=50, default="Verdana")
     valid_until_alignment = models.CharField(max_length=10, choices=[('left','Left'),('center','Center'),('right','Right')], default='left')
+    valid_until_tag = models.CharField(max_length=50, default="Valid Until")
+    valid_until_tag_active = models.BooleanField(default=True)
+    valid_until_value_active = models.BooleanField(default=True)
+    valid_until_tag_color = models.CharField(max_length=7, default="#333333")
+    valid_until_value_color = models.CharField(max_length=7, default="#333333")
 
     def __str__(self):
-        return self.name
+        return self.school.school_name 

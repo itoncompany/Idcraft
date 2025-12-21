@@ -27,141 +27,109 @@
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light fixed-top shadow-sm" id="mainNav">
             <div class="container px-5">
-                <!-- Brand -->
+
                 <a class="navbar-brand d-flex align-items-center gap-2" href="{% url 'home' %}">
                     {% if company.logo %}
-                        <img src="{{ company.logo.url }}" alt="{{ company.company_name }}" 
+                        <img src="{{ company.logo.url }}" alt="{{ company.company_name }}"
                             style="height:20px; width:auto; object-fit:contain;">
-                            <span class="fw-bold " style="font-size: 1.2em;">{{ company.app_name }}</span>
+                        <span class="fw-bold" style="font-size:1.2em;">{{ company.app_name }}</span>
                     {% else %}
-                        <!-- fallback text if no logo -->
                         <span class="fw-bold">{{ company.app_name }}</span>
                     {% endif %}
                 </a>
 
-
-                <!-- Toggler -->
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" 
-                        aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" id="menuToggle">
                     <span class="me-2">Menu</span>
                     <i class="bi-list"></i>
                 </button>
 
-                <!-- Navbar links -->
                 <div class="collapse navbar-collapse" id="navbarResponsive">
-                   <ul class="navbar-nav ms-auto me-4 my-3 my-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link me-lg-3" href="{% url 'service_pricing' %}">
-                                <i class="bi bi-tags me-1"></i> Service Pricing </i>
-                            </a>
-                        </li>
+                    <ul class="navbar-nav ms-auto me-4 my-3 my-lg-0">
 
-                        <!-- School Dashboard Dropdown -->
+                        {% if user.is_authenticated %}
                         <li class="nav-item dropdown d-none d-lg-block">
-                            <a class="nav-link dropdown-toggle me-lg-3"
-                            href="#"
-                            id="schoolDashboardDropdown"
-                            role="button"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false">
+                            <a href="#" class="nav-link me-lg-3" id="schoolDashboardBtn">
                                 <i class="bi bi-house-door me-1"></i> School Dashboard
                             </a>
 
-                            <ul class="dropdown-menu" aria-labelledby="schoolDashboardDropdown">
+                            <ul class="dropdown-menu shadow" id="schoolDashboardMenu">
                                 <li>
-                                    <a class="dropdown-item d-flex justify-content-between align-items-center" 
-                                    href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
-                                        <span><i class="bi bi-person-circle me-1"></i> Update Profile</span>
+                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
+                                        <i class="bi bi-person-circle me-2"></i> Update Profile
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item d-flex justify-content-between align-items-center" 
-                                    href="#" data-bs-toggle="modal" data-bs-target="#schoolModal">
-                                        <span><i class="bi bi-building me-1"></i> Update School</span>
+                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#schoolModal">
+                                        <i class="bi bi-building me-2"></i> Update School
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item d-flex justify-content-between align-items-center" 
-                                    href="{% url 'grade_list' %}">
-                                        <span><i class="bi bi-card-list me-1"></i> Grade List</span>
+                                    <a class="dropdown-item" href="{% url 'grade_list' %}">
+                                        <i class="bi bi-card-list me-2"></i> Grade List
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item d-flex justify-content-between align-items-center" 
-                                    href="#" data-bs-toggle="modal" data-bs-target="#passwordModal">
-                                        <span><i class="bi bi-key me-1"></i> Password Change</span>
+                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#passwordModal">
+                                        <i class="bi bi-key me-2"></i> Password Change
                                     </a>
                                 </li>
                             </ul>
                         </li>
 
-                        <!-- Small devices -->
                         <li class="nav-item d-lg-none">
-                            <a class="dropdown-item d-flex justify-content-between align-items-center" 
-                            href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
-                                <span><i class="bi bi-person-circle me-1"></i> Update Profile</span>
+                            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">
+                                <i class="bi bi-person-circle me-1"></i> Update Profile
                             </a>
                         </li>
                         <li class="nav-item d-lg-none">
-                            <a class="dropdown-item d-flex justify-content-between align-items-center" 
-                            href="#" data-bs-toggle="modal" data-bs-target="#schoolModal">
-                                <span><i class="bi bi-building me-1"></i> Update School</span>
+                            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#schoolModal">
+                                <i class="bi bi-building me-1"></i> Update School
                             </a>
                         </li>
                         <li class="nav-item d-lg-none">
-                            <a class="dropdown-item d-flex justify-content-between align-items-center" 
-                            href="#" data-bs-toggle="modal" data-bs-target="#passwordModal">
-                                <span><i class="bi bi-key me-1"></i> Password Change</span>
+                            <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#passwordModal">
+                                <i class="bi bi-key me-1"></i> Password Change
+                            </a>
+                        </li>
+                        {% endif %}
+
+                        <li class="nav-item">
+                            <a class="nav-link me-lg-3" href="{% url 'service_pricing' %}">
+                                <i class="bi bi-tags me-1"></i> Service Pricing
                             </a>
                         </li>
                     </ul>
 
-
-
-                    <!-- Buttons -->
                     <div class="d-flex gap-2 align-items-center">
-
-                        <!-- Feedback Button (always visible) -->
-                       <button class="btn btn-dark rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#feedbackModal">
-                            <span class="d-flex align-items-center">
-                                <i class="bi-chat-text-fill me-2"></i>
-                                <span class="small">Send Feedback</span>
-                            </span>
+                        <button class="btn btn-dark rounded-pill px-3 mb-2 mb-lg-0"
+                                data-bs-toggle="modal" data-bs-target="#feedbackModal">
+                            <i class="bi-chat-text-fill me-2"></i>
+                            <span class="small">Send Feedback</span>
                         </button>
 
+                        {% if user.is_authenticated %}
+                        <button class="btn btn-dark rounded-pill px-3 mb-2 mb-lg-0 d-flex align-items-center">
+                            {% if user.profile.pr_pic %}
+                                <img src="{{ user.profile.pr_pic.url }}" class="rounded-circle me-2"
+                                    width="25" height="25" style="object-fit:cover; border:1px solid white; padding:2px;">
+                            {% else %}
+                                <i class="bi-person-circle me-2"></i>
+                            {% endif %}
+                            <span class="small">{{ user.profile.full_name|default:user.username }}</span>
+                        </button>
 
-                       {% if user.is_authenticated %}
-                            <!-- User Info Button -->
-                            <button class="btn btn-dark rounded-pill px-3 mb-2 mb-lg-0 d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#feedbackModal">
-                                {% if user.profile.pr_pic %}
-                                    <img src="{{ user.profile.pr_pic.url }}" alt="Profile" class="rounded-circle me-2" width="25" height="25" style="object-fit: cover; border:1px solid white; padding:2px;">
-                                {% else %}
-                                    <i class="bi-person-circle me-2"></i>
-                                {% endif %}
-                                <span class="small">{{ user.profile.full_name|default:user.username }}</span>
+                        <form method="post" action="{% url 'logout' %}" class="mb-0">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger rounded-pill px-3 mb-2 mb-lg-0">
+                                <i class="bi-box-arrow-right me-2"></i> Logout
                             </button>
-
-                            <!-- Logout Button -->
-                            <form method="post" action="{% url 'logout' %}" class="mb-0">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger rounded-pill px-3 mb-2 mb-lg-0">
-                                    <span class="d-flex align-items-center">
-                                        <i class="bi-box-arrow-right me-2"></i>
-                                        <span class="small">Logout</span>
-                                    </span>
-                                </button>
-                            </form>
+                        </form>
                         {% else %}
-                            <!-- Sign In / Sign Up Button -->
-                            <button class="btn btn-dark rounded-pill px-3 mb-2 mb-lg-0" data-bs-toggle="modal" data-bs-target="#signInModal">
-                                <span class="d-flex align-items-center">
-                                    <i class="bi-person-circle me-2"></i>
-                                    <span class="small">Sign In & Sign Up</span>
-                                </span>
-                            </button>
+                        <button class="btn btn-dark rounded-pill px-3 mb-2 mb-lg-0"
+                                data-bs-toggle="modal" data-bs-target="#signInModal">
+                            <i class="bi-person-circle me-2"></i> Sign In & Sign Up
+                        </button>
                         {% endif %}
-
-
                     </div>
                 </div>
             </div>
@@ -382,9 +350,9 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
 
-                    <div class="modal-header -dark p-3">
-                        <h5 class="modal-title text-black">Send Feedback</h5>
-                        <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal"></button>
+                    <div class="modal-header bg-dark p-3">
+                        <h5 class="modal-title text-white">Send Feedback</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                     </div>
 
                     <div class="modal-body p-4">
@@ -616,6 +584,47 @@
             </div>
         </div>
         </div>
+
+
+        <!-- for nav bar with dropdown-->
+         <style>
+        .dropdown-menu {
+            display: none;
+        }
+        .dropdown-menu.show {
+            display: block;
+        }
+        </style>
+
+        <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const menuToggle = document.getElementById("menuToggle");
+            const navbar = document.getElementById("navbarResponsive");
+
+            menuToggle.addEventListener("click", function () {
+                navbar.classList.toggle("show");
+            });
+
+            const dashboardBtn = document.getElementById("schoolDashboardBtn");
+            const dashboardMenu = document.getElementById("schoolDashboardMenu");
+
+            if (dashboardBtn) {
+                dashboardBtn.addEventListener("click", function (e) {
+                    e.preventDefault();
+                    dashboardMenu.classList.toggle("show");
+                });
+
+                document.addEventListener("click", function (e) {
+                    if (!dashboardBtn.contains(e.target) && !dashboardMenu.contains(e.target)) {
+                        dashboardMenu.classList.remove("show");
+                    }
+                });
+            }
+        });
+        </script>
+
+
 
 
 

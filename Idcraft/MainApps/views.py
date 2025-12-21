@@ -86,24 +86,28 @@ def grade_list(request):
     }
     return render(request, 'MainApps/grade_list.html', context)
 
-
 def card_form(request, class_id=None):
     user = request.user
     school = SchoolDetails.objects.filter(user=user).first()
     students_list = school.students.filter(grade=class_id)
 
-    roll = request.GET.get('roll')
-    if roll:
-        students_list = students_list.filter(roll__icontains=roll)
+    # 🔹 Roll filter (supports: 1 or 1,2,3)
+    roll_input = request.GET.get('roll')
+    if roll_input:
+        roll_list = [r.strip() for r in roll_input.split(',') if r.strip()]
+        students_list = students_list.filter(roll__in=roll_list)
 
+    # 🔹 Status filter
     status = request.GET.get('status')
     if status:
         students_list = students_list.filter(status=status)
 
+    # 🔹 Section filter
     section = request.GET.get('section')
     if section:
         students_list = students_list.filter(section=section)
 
+    # 🔹 Sorting
     sort = request.GET.get('sort')
     if sort == 'az':
         students_list = students_list.order_by('full_name')
@@ -163,6 +167,8 @@ def add_student(request):
         messages.success(request, f"{student.full_name} added successfully!")
 
     return redirect(request.META.get('HTTP_REFERER', 'students_list'))
+
+
 
 
 @login_required
@@ -258,7 +264,7 @@ def student_list(request):
 @login_required
 def export_id_cards(request, class_id=None):
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'inline; filename="id_cards_{class_id}.pdf"'
+    response['Content-Disposition'] = f'inline; filename="id_cards_{class_id or "all"}.pdf"'
 
     page_width, page_height = landscape(A4)
     c = canvas.Canvas(response, pagesize=(page_width, page_height))
@@ -277,47 +283,38 @@ def export_id_cards(request, class_id=None):
         return HttpResponse("Template image not found", status=404)
 
     template_img = ImageReader(template_path)
-
-    students = Student.objects.filter(school=school)
-    if class_id:
-        students = students.filter(grade__icontains=class_id)
-
-    section_filter = request.GET.get('section')
-    if section_filter:
-        students = students.filter(section=section_filter)
-
-    if status_filter := request.GET.get('status'):
-        students = students.filter(status=status_filter)
-
-    roll_filter = request.GET.get('roll')
-    if roll_filter:
-        students = students.filter(roll__icontains=roll_filter)
-
-    students = students.order_by('grade', 'section', 'roll')
-
-    # Compute card size from template image
     pil_img = Image.open(template_path)
     img_width_px, img_height_px = pil_img.size
     dpi_x, dpi_y = pil_img.info.get('dpi', (300, 300))
     card_width = img_width_px * 72 / dpi_x
     card_height = img_height_px * 72 / dpi_y
 
-    # Margins and spacing
-    margin_x = 10 * mm
-    margin_y = 10 * mm
-
-    # Fix 5 cards per row and compute dynamic spacing
-    desired_cards_per_row = 5
-    total_card_width = desired_cards_per_row * card_width
-    x_spacing = (page_width - 2 * margin_x - total_card_width) / (desired_cards_per_row - 1)
-    cards_per_row = desired_cards_per_row
-
-    # Cards per column
-    y_spacing = 10 * mm
+    margin_x = 10
+    margin_y = 10
+    cards_per_row = 5
+    total_card_width = cards_per_row * card_width
+    x_spacing = (page_width - 2 * margin_x - total_card_width) / (cards_per_row - 1)
+    y_spacing = 10
     cards_per_column = int((page_height - 2 * margin_y + y_spacing) // (card_height + y_spacing))
     cards_per_page = cards_per_row * cards_per_column
 
-    # Function to draw text
+    # Query students
+    students = Student.objects.filter(school=school)
+    if class_id:
+        students = students.filter(grade__icontains=class_id)
+    section_filter = request.GET.get('section')
+    if section_filter:
+        students = students.filter(section=section_filter)
+    status_filter = request.GET.get('status')
+    if status_filter:
+        students = students.filter(status=status_filter)
+    roll_filter = request.GET.get('roll')
+    if roll_filter:
+        roll_list = [r.strip() for r in roll_filter.split(',') if r.strip()]
+        students = students.filter(roll__in=roll_list)
+    students = students.order_by('grade', 'section', 'roll')
+
+    # Helper to draw text with color and alignment
     def draw_text(value, x_pos, y_pos, font_size=10, font_color="#000000", font_family="Helvetica", align='left'):
         try:
             c.setFont(font_family, font_size)
@@ -331,35 +328,18 @@ def export_id_cards(request, class_id=None):
         else:
             c.drawString(x_pos, y_pos, str(value))
 
-    # Map template fields to student model attributes
-    FIELD_MAP = {
-        'roll': 'roll',
-        'full_name': 'full_name',
-        'grade': 'grade',
-        'address': 'address',
-        'parent_name': 'parent_name',
-        'parent_phone': 'parent_phone',
-        'valid_until': 'valid_until',
-    }
+    FIELD_NAMES = [
+        'roll', 'full_name', 'dob', 'gender', 'email', 'student_phone',
+        'parent_name', 'parent_phone', 'address', 'school_name', 'grade', 'section', 'valid_until'
+    ]
 
-    # Labels for each field
-    FIELD_LABELS = {
-        'roll': 'Roll No:',
-        'full_name': 'Name:',
-        'grade': 'Class:',
-        'address': 'Address:',
-        'parent_name': 'Parent:',
-        'parent_phone': 'Parent:',
-        'valid_until': 'Valid Till:',
-    }
-
-    for index, student in enumerate(students):
-        pos_on_page = index % cards_per_page
+    for idx, student in enumerate(students):
+        pos_on_page = idx % cards_per_page
         row = pos_on_page // cards_per_row
         col = pos_on_page % cards_per_row
 
-        if index > 0 and index % cards_per_page == 0:
-            c.showPage()  # New page
+        if idx > 0 and idx % cards_per_page == 0:
+            c.showPage()
 
         x = margin_x + col * (card_width + x_spacing)
         y = page_height - margin_y - (row + 1) * card_height - row * y_spacing
@@ -368,64 +348,53 @@ def export_id_cards(request, class_id=None):
         c.drawImage(template_img, x, y, width=card_width, height=card_height, preserveAspectRatio=False, mask='auto')
 
         # Draw student photo
-        if student.photo:
+        if template.photo_value_active and getattr(student, 'photo', None):
             photo_path = os.path.join(settings.MEDIA_ROOT, student.photo.name)
             if os.path.exists(photo_path):
-                photo_w = getattr(template, 'photo_width', 40*mm)
-                photo_h = getattr(template, 'photo_height', 50*mm)
-                photo_x = x + getattr(template, 'photo_x', 10*mm)
-                photo_y = y + getattr(template, 'photo_y', card_height - photo_h - 10*mm)
+                photo_w = getattr(template, 'photo_width', 40)
+                photo_h = getattr(template, 'photo_height', 50)
+                photo_x = x + getattr(template, 'photo_x', 10)
+                photo_y = y + getattr(template, 'photo_y', card_height - photo_h - 10)
                 c.drawImage(photo_path, photo_x, photo_y, width=photo_w, height=photo_h, preserveAspectRatio=True, mask='auto')
 
-        # Draw fields dynamically with labels
-        for field_name, student_attr in FIELD_MAP.items():
-            # Special handling for Roll No + Section
-            if field_name == 'roll':
+        # Draw all fields
+        for field in FIELD_NAMES:
+            value_active = getattr(template, f"{field}_value_active", True)
+            tag_active = getattr(template, f"{field}_tag_active", True)
+            if not value_active and not tag_active:
+                continue
+
+            # Get field value
+            if field == 'roll':
                 roll = getattr(student, 'roll', '')
                 section = getattr(student, 'section', '')
-                value = f"{roll} - ( {section} )"  # Display as Roll No: 2 -(A)
+                value = f"{roll} - ({section})"
+            elif field == 'valid_until':
+                val = getattr(student, field, None)
+                value = val.strftime("%d-%m-%Y") if val else ''
             else:
-                value = getattr(student, student_attr, '')
-                if field_name == 'valid_until' and value:
-                    value = value.strftime('%d-%m-%Y')
+                value = getattr(student, field, '')
 
-            # Get font & position from template
-            x_pos = getattr(template, f"{field_name}_x", 10)
-            y_pos = getattr(template, f"{field_name}_y", 10)
-            font_size = getattr(template, f"{field_name}_font_size", 10)
-            font_color = getattr(template, f"{field_name}_font_color", "#000000")
-            font_family = getattr(template, f"{field_name}_font_family", "Helvetica")
-            alignment = getattr(template, f"{field_name}_alignment", "left")
+            # Position and styling
+            x_pos = getattr(template, f"{field}_x", 10) + x
+            y_pos = getattr(template, f"{field}_y", 10) + y
+            font_size = getattr(template, f"{field}_font_size", 10)
+            font_family = getattr(template, f"{field}_font_family", "Helvetica")
+            alignment = getattr(template, f"{field}_alignment", "left")
 
-            label = FIELD_LABELS.get(field_name, '')
+            tag_text = getattr(template, f"{field}_tag", field.capitalize())
+            tag_color = getattr(template, f"{field}_tag_color", "#000000")
+            value_color = getattr(template, f"{field}_value_color", "#000000")
 
-            # Draw label
-            draw_text(label, x + x_pos, y + y_pos, font_size, font_color, font_family, alignment)
-            # Draw value next to label
-            label_width = c.stringWidth(label, font_family, font_size)
-            draw_text(value, x + x_pos + label_width + 2, y + y_pos, font_size, font_color, font_family, alignment)
+            if tag_active:
+                draw_text(f"{tag_text}:", x_pos, y_pos, font_size, tag_color, font_family, alignment)
+
+            if value_active:
+                label_width = c.stringWidth(f"{tag_text}:", font_family, font_size) if tag_active else 0
+                draw_text(value, x_pos + label_width + 2, y_pos, font_size, value_color, font_family, alignment)
 
     c.save()
     return response
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @login_required
