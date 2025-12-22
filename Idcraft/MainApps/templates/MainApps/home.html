@@ -266,7 +266,7 @@
         <!-- Profile Image -->
         {% if member.photo %}
           <img src="{{ member.photo.url }}" alt="{{ member.name }}"
-              style="width:80px; height:80px; border-radius:50%; object-fit:cover; margin-bottom:8px;">
+              style="width:80px; height:80px;border:2px solid  #f2f2f2; padding:3px; border-radius:50%; object-fit:cover; margin-bottom:8px;">
         {% else %}
           <div style="
             width:80px; height:80px;
@@ -279,7 +279,7 @@
             font-size:20px;
             margin-bottom:8px;
           ">
-            {{ member.name|slice:":1" }}
+           <span style="font-family:'Times New Roman', Times, serif;"> {{ member.name|slice:":1" }}</span>
           </div>
         {% endif %}
 
@@ -314,6 +314,11 @@
           {% if member.instagram_link %}
             <a href="{{ member.instagram_link }}" target="_blank" style="color:black; font-size:15px;">
               <i class="fab fa-instagram"></i>
+            </a>
+          {% endif %}
+          {% if member.github_link %}
+            <a href="{{ member.github_link }}" target="_blank" style="color:black; font-size:15px;">
+              <i class="fab fa-github"></i>
             </a>
           {% endif %}
         </div>

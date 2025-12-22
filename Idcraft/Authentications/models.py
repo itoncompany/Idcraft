@@ -119,6 +119,7 @@ class TeamMember(models.Model):
     twitter_link = models.URLField(blank=True)
     facebook_link = models.URLField(blank=True)
     instagram_link = models.URLField(blank=True)
+    github_link=models.URLField(blank=True)
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
