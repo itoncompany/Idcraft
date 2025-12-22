@@ -17,7 +17,7 @@ from django.conf import settings
 from PIL import Image
 from io import BytesIO
 import os
-from Authentications.models import Profile
+from Authentications.models import Profile,TeamMember
 from MainApps.models import SchoolDetails, Student, IDCardTemplate
 from RatingAndReviews.models import Feedback
 from Authentications.models import ServicePrice, CompanyPaymentDetails
@@ -31,7 +31,8 @@ pdfmetrics.registerFont(TTFont('Verdana', verdana_path))
 
 def home(request):
     ratings = Feedback.objects.filter(is_public=True).order_by('-created_at')[:5]
-    return render(request, 'MainApps/home.html', {'ratings': ratings})
+    team=TeamMember.objects.filter(is_active=True).order_by('-created_at')[:5]
+    return render(request, 'MainApps/home.html', {'ratings': ratings,'tam_members':team})
 
 
 def service_pricing(request):

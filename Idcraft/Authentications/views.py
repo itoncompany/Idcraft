@@ -61,7 +61,7 @@ def signup_view(request):
         )
         return redirect("/")
 
-    return render(request, "account/signup.html")
+    return render(request, "MainApps/home.html")
 
 
 # ------------------------------

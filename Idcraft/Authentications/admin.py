@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from Authentications.models import Profile,CompanyDetails,CompanyPaymentDetails,PaymentDetails,ServicePrice
+from Authentications.models import Profile,CompanyDetails,CompanyPaymentDetails,PaymentDetails,ServicePrice,TeamMember
 
 
 @admin.register(Profile)
@@ -19,6 +19,13 @@ class ProfileAdmin(admin.ModelAdmin):
 
 
 
+@admin.register(TeamMember)
+class TeamMemberAdmin(admin.ModelAdmin):
+    list_display = ('name', 'role', 'company', 'is_active', 'created_at')
+    list_filter = ('is_active', 'company', 'role')
+    search_fields = ('name', 'role', 'company__name')
+    ordering = ('-created_at',)
+    readonly_fields = ('created_at',)
 
 
 

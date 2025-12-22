@@ -109,6 +109,24 @@ class PaymentDetails(models.Model):
 
 
 
+class TeamMember(models.Model):
+    company = models.ForeignKey(CompanyDetails, on_delete=models.SET_NULL, null=True, blank=True)
+    name = models.CharField(max_length=150)
+    role = models.CharField(max_length=100)
+    photo = models.ImageField(upload_to='team_photos/', blank=True, null=True)
+    bio = models.TextField(blank=True)
+    linkedin_link = models.URLField(blank=True)
+    twitter_link = models.URLField(blank=True)
+    facebook_link = models.URLField(blank=True)
+    instagram_link = models.URLField(blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.role}"
+
+
+
 
 class ServicePrice(models.Model):
     PAYMENT_FREQUENCY_CHOICES = (
