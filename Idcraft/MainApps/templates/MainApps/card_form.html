@@ -116,9 +116,16 @@
                                     <tr>
                                         <td>{{ student.roll }}</td>
                                         <td>
-                                            <div class="widget-26-job-emp-img">
-                                                <img src="{{ student.get_photo_url }}" alt="{{ student.full_name }}">
-                                            </div>
+
+                                        <div class="widget-26-job-emp-img">
+                                            {% if student.photo %}
+                                                <img src="{{ student.photo.url }}" alt="{{ student.full_name }}">
+                                            {% else %}
+                                                <i class="bi bi-person-circle student-icon " style="font-size:28px;color:black;padding:5px;"></i>
+                                            {% endif %}
+                                        </div>
+
+
                                         </td>
                                         <td>{{ student.full_name }}</td>
                                         <td>{{ student.grade }} - {{ student.section|default:"-" }}</td>
@@ -255,13 +262,17 @@
                         <div class="col-md-4">
                             <label class="form-label small">Grade</label>
                             <select name="grade" id="grade" class="form-control form-control-sm" required>
-                                <option value="{{ class_id }}">{{ class_id }}</option>
+                                {% for value, display in grade_choices %}
+                                    <option value="{{ value }}" {% if value == class_id %}selected{% endif %}>{{ display }}</option>
+                                {% endfor %}
                             </select>
                         </div>
+
 
                         <div class="col-md-4">
                             <label class="form-label small">Section</label>
                             <select name="section" id="section" class="form-control form-control-sm" required>
+                                <option value="">- - - select sections - - -</option>
                                 {% for k, v in section_choices %}
                                     <option value="{{ k }}">{{ v }}</option>
                                 {% endfor %}

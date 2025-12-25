@@ -1,0 +1,249 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}School Dashboard{% endblock %}
+
+{% block Main_content %}
+<div class="container text-center" style="margin-top: 100px;">
+  <!-- First Row -->
+  <div class="row mb-3 shadow-sm" style="background: #fcfbfb;">
+    <!-- Main Content -->
+    <div class="col-md-8 text-black p-3">
+      <div class="row g-0 align-items-center">
+        
+
+        <div class="col-md-7">
+          {% if school.school_image %}
+            <img src="{{ school.school_image.url }}"
+                 class="img-fluid w-100"
+                 style="object-fit: cover; height: 250px;"
+                 alt="{{ school.school_name }}">
+          {% else %}
+            <img src="{% static 'images/default_school.jpg' %}"
+                 class="img-fluid w-100"
+                 style="object-fit: cover; height: 250px;"
+                 alt="Default School">
+          {% endif %}
+        </div>
+
+        <!-- Content -->
+        <div class="col-md-5">
+          <div class="card-body">
+             <a href="#" class="btn btn-sm btn-dark mb-2" data-bs-toggle="modal" data-bs-target="#schoolModal">
+                <i class="bi bi-pencil-square"></i>
+            </a>
+            <h5 class="card-title" style="font-size: 30px;">{{ school.school_name|default:"Default School" }}</h5>
+            
+            <p class="card-text">
+              <small class="text-muted">
+                Address: {{ school.address|default:"No address provided." }}
+              </small>
+            </p>
+            <p class="card-text">
+              <small class="text-muted">
+                Last updated: {{ school.updated_at|default:"recently" }}
+              </small>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Side Info / Small Donut Chart -->
+    <div class="col-6 col-md-4 bg-light p-3 d-flex justify-content-center align-items-center">
+      <div style="width: 250px; height: 250px;margin-left:100px;">
+        <canvas id="donutChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Second Row: Line Chart -->
+  <div class="row mb-3 shadow-sm" style="background: #fcfbfb;">
+    <div class="col-12 text-white p-3">
+      <div id="lineChartContainer" style="height: 300px;">
+        <canvas id="lineChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Third Row -->
+  <div class="row mb-3">
+    <div class="col-12  text-white p-3">
+      <table class="table table-bordered text-center">
+            <thead class="table-white">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Students</th>
+                    <th scope="col">NEW</th>
+                    <th scope="col">LOST</th>
+                    <th scope="col">REISSUED</th>
+                   
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td>{{ total_students }}</td>
+                    <td>{{ status_totals.NEW|default:0 }}</td>
+                    <td>{{ status_totals.LOST|default:0 }}</td>
+                    <td>{{ status_totals.REISSUED|default:0 }}</td>
+                    
+                </tr>
+            </tbody>
+        </table>
+
+
+    </div>
+   
+  </div>
+</div>
+
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  // ----------------- Bar Chart (Grades) -----------------
+  const gradeCounts = {{ grade_counts|default:"{}"|safe }};
+  const grades = {
+    {% for code, name in grades %}
+      '{{ code }}': '{{ name }}',
+    {% endfor %}
+  };
+
+  const barLabels = Object.keys(gradeCounts).length ? Object.keys(gradeCounts).map(code => grades[code] || code)
+                                                     : ['Grade 1', 'Grade 2', 'Grade 3', 'Grade 4'];
+  const barValues = Object.keys(gradeCounts).length ? Object.values(gradeCounts) : [10, 15, 12, 8];
+
+  const barData = {
+    labels: barLabels,
+    datasets: [{
+      label: 'Number of Students',
+      data: barValues,
+      backgroundColor: [
+        'rgba(75, 192, 192, 0.2)',
+        'rgba(54, 162, 235, 0.2)',
+        'rgba(255, 205, 86, 0.2)',
+        'rgba(255, 99, 132, 0.2)',
+        'rgba(153, 102, 255, 0.2)',
+        'rgba(201, 203, 207, 0.2)',
+        'rgba(255, 159, 64, 0.2)'
+      ],
+      borderColor: [
+        'rgb(75, 192, 192)',
+        'rgb(54, 162, 235)',
+        'rgb(255, 205, 86)',
+        'rgb(255, 99, 132)',
+        'rgb(153, 102, 255)',
+        'rgb(201, 203, 207)',
+        'rgb(255, 159, 64)'
+      ],
+      borderWidth: 1
+    }]
+  };
+
+  const barConfig = {
+    type: 'bar',
+    data: barData,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: { y: { beginAtZero: true } }
+    }
+  };
+
+  new Chart(document.getElementById('lineChart').getContext('2d'), barConfig);
+
+  // ------------------ Donut Chart ------------------
+  const maleCount = {{ male_count|default:0 }};
+  const femaleCount = {{ female_count|default:0 }};
+  const otherCount = {{ other_count|default:0 }};
+  const totalGenderCount = maleCount + femaleCount + otherCount;
+
+  const donutDataObj = {
+    labels: ['Male', 'Female', 'Other'],
+    datasets: [{
+      label: 'Gender',
+      data: totalGenderCount ? [maleCount, femaleCount, otherCount] : [10, 12, 5],
+      backgroundColor: ['rgb(54, 162, 235)','rgb(255, 99, 132)','rgb(255, 205, 86)'],
+      hoverOffset: 4
+    }]
+  };
+
+  const donutConfigObj = {
+    type: 'doughnut',
+    data: donutDataObj,
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 20, padding: 15 } },
+        title: { display: true, text: 'Gender Distribution' }
+      }
+    }
+  };
+
+  new Chart(document.getElementById('donutChart').getContext('2d'), donutConfigObj);
+</script>
+
+
+
+
+
+
+<!--  model for school update form -->
+
+
+
+            <!-- update_school_modal.html -->
+            <div class="modal fade" id="schoolModal" tabindex="-1" aria-labelledby="schoolModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="schoolModalLabel">Update School Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form method="POST" enctype="multipart/form-data" action="{% url 'update_school' %}">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                    <div class="mb-2">
+                        <label>School Name</label>
+                        <input type="text" name="school_name" class="form-control" value="{{ school.school_name }}">
+                    </div>
+                    <div class="mb-2">
+                        <label>School Logo</label>
+                        <input type="file" name="school_logo" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label>School Image</label>
+                        <input type="file" name="school_image" class="form-control">
+                    </div>
+                    <div class="mb-2">
+                        <label>Address</label>
+                        <input type="text" name="address" class="form-control" value="{{ school.address }}">
+                    </div>
+                    <div class="mb-2">
+                        <label>Contact Email</label>
+                        <input type="email" name="contact_email" class="form-control" value="{{ school.contact_email }}">
+                    </div>
+                    <div class="mb-2">
+                        <label>Contact Phone</label>
+                        <input type="text" name="contact_phone" class="form-control" value="{{ school.contact_phone }}">
+                    </div>
+                    <div class="mb-2">
+                        <label>Website</label>
+                        <input type="url" name="website" class="form-control" value="{{ school.website }}">
+                    </div>
+                    </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-dark" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-dark">Save Changes</button>
+                    </div>
+                </form>
+                </div>
+            </div>
+            </div>
+
+
+
+
+{% endblock %}

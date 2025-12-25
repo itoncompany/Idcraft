@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404 # pyright: ignore[reportMissingModuleSource]
 from django.contrib import messages
-from django.db.models import Q # pyright: ignore[reportMissingModuleSource]
+from django.db.models import Q, Count # pyright: ignore[reportMissingModuleSource]
 from django.http import HttpResponse # pyright: ignore[reportMissingModuleSource]
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
@@ -14,6 +14,8 @@ from reportlab.lib import colors
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
 from django.conf import settings
+import pandas as pd
+from datetime import datetime
 from PIL import Image
 from io import BytesIO
 import os
@@ -27,6 +29,59 @@ arial_path = os.path.join(settings.BASE_DIR, 'fonts', 'arial.ttf')
 verdana_path = os.path.join(settings.BASE_DIR, 'fonts', 'verdana.ttf')
 pdfmetrics.registerFont(TTFont('Arial', arial_path))
 pdfmetrics.registerFont(TTFont('Verdana', verdana_path))
+
+
+
+def school(request):
+    user = request.user
+    if not user.is_authenticated:
+        messages.warning(request, "You need to log in to view the grade list.")
+        return redirect('home')
+
+    school = SchoolDetails.objects.filter(user=user).first()
+    if not school:
+        messages.warning(request, "No school details found for the logged-in user.")
+        return redirect('home')
+
+    students = school.students.all()
+
+    # Total students
+    total_students = students.count()
+
+    # Status totals
+    status_totals = {}
+    for status_code, _status_name in Student.ID_STATUS_CHOICES:
+        status_totals[status_code] = students.filter(status=status_code).count()
+
+    # Grade-wise counts
+    grade_counts_qs = students.values('grade').annotate(count=Count('id'))
+    grade_counts = {item['grade']: item['count'] for item in grade_counts_qs}
+    for code, _name in Student.GRADE_CHOICES:
+        if code not in grade_counts:
+            grade_counts[code] = 0
+
+    # Gender counts
+    gender_counts = students.aggregate(
+        male=Count('id', filter=Q(gender='MALE')),
+        female=Count('id', filter=Q(gender='FEMALE')),
+        other=Count('id', filter=Q(gender='OTHER'))
+    )
+
+    context = {
+        "school": school,
+        "students": students,
+        "total_students": total_students,
+        "status_totals": status_totals,
+        "grade_counts": grade_counts,
+        "male_count": gender_counts.get('male', 0),
+        "female_count": gender_counts.get('female', 0),
+        "other_count": gender_counts.get('other', 0),
+        "grades": Student.GRADE_CHOICES,
+        "gender_choices": Student.GENDER_CHOICES,
+        "section_choices": Student.SECTION_CHOICES,
+    }
+
+    return render(request, 'MainApps/school.html', context)
 
 
 def home(request):
@@ -135,6 +190,100 @@ def card_form(request, class_id=None):
     }
     return render(request, "MainApps/card_form.html", context)
 
+
+
+
+
+
+def import_students_from_excel(file, request, school):
+    df = pd.read_excel(file)
+    count = 0
+
+    for _, row in df.iterrows():
+        Student.objects.create(
+            user=request.user,
+            school=school,
+
+            full_name=str(row.get('full_name', '')).strip(),
+            roll=str(row.get('roll')).strip() if pd.notna(row.get('roll')) else None,
+            grade=row.get('grade'),
+            section=str(row.get('section')).strip() if pd.notna(row.get('section')) else None,
+            gender=row.get('gender') if pd.notna(row.get('gender')) else 'OTHER',
+
+            dob=row.get('dob') if pd.notna(row.get('dob')) else None,
+            valid_until=row.get('valid_until') if pd.notna(row.get('valid_until')) else None,
+
+            parent_name=str(row.get('parent_name')).strip() if pd.notna(row.get('parent_name')) else None,
+            parent_phone=str(row.get('parent_phone')).strip() if pd.notna(row.get('parent_phone')) else None,
+            address=str(row.get('address')).strip() if pd.notna(row.get('address')) else None,
+
+            status=row.get('status') if pd.notna(row.get('status')) else 'NEW',
+        )
+        count += 1
+
+    return count
+
+
+
+def upload_excel(request):
+    if request.method == 'POST':
+        excel_file = request.FILES.get('excel_file')
+
+        if not excel_file:
+            messages.error(request, "Please upload an Excel file.")
+            return redirect(request.META.get('HTTP_REFERER'))
+
+        school = SchoolDetails.objects.filter(user=request.user).first()
+
+        if not school:
+            messages.error(request, "School not found for this user.")
+            return redirect(request.META.get('HTTP_REFERER'))
+
+        try:
+            count = import_students_from_excel(excel_file, request, school)
+            messages.success(request, f"{count} students imported successfully.")
+
+        except Exception as e:
+            messages.error(request, f"Import failed: {e}")
+
+        return redirect(request.META.get('HTTP_REFERER'))
+
+    # Handle GET request
+    return redirect('/')
+
+
+
+
+def export_excel(request):
+    school = SchoolDetails.objects.filter(user=request.user).first()
+    students = Student.objects.filter(school=school)
+
+    if not students.exists():
+        messages.warning(request, "No students to export!")
+        return redirect(request.META.get('HTTP_REFERER'))  # Back to the same page
+
+    # Create DataFrame
+    df = pd.DataFrame(list(students.values(
+        'full_name', 'roll', 'grade', 'section', 'gender',
+        'dob', 'valid_until', 'parent_name', 'parent_phone', 'address', 'status'
+    )))
+
+    # Prepare Excel file in memory
+    from io import BytesIO
+    output = BytesIO()
+    df.to_excel(output, index=False)
+    output.seek(0)
+
+    # Show success message
+    messages.success(request, "Students Excel exported successfully!")
+
+    # Return file
+    response = HttpResponse(
+        output,
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+    response['Content-Disposition'] = 'attachment; filename=students.xlsx'
+    return response
 
 
 

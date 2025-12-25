@@ -71,10 +71,9 @@ class Student(models.Model):
     ] #this isf for
     ID_STATUS_CHOICES = [
     ('NEW', 'New'),
-    ('ACTIVE', 'Active'),
+    
     ('LOST', 'Lost'),
     ('REISSUED', 'Reissued'),
-    ('EXPIRED', 'Expired'),
 ]
 
 
