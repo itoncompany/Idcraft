@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Dual Camera Capture</title>
+  <style>
+    body { text-align: center; font-family: Arial; margin: 20px; }
+    video, img, canvas { width: 90%; max-width: 400px; border: 1px solid #ccc; margin-top: 10px; }
+    button, a { margin-top: 10px; padding: 10px 20px; font-size: 16px; text-decoration: none; }
+    a { background-color: #4CAF50; color: white; border-radius: 5px; display: inline-block; }
+  </style>
+</head>
+<body>
+  <h2>Dual Camera Capture</h2>
+
+  <!-- IP Camera -->
+  <button id="openIpCam">Open IP Camera</button>
+  <br>
+  <img id="ipVideo" alt="IP Webcam Feed">
+  <br>
+  <button id="snapIp">Take IP Snapshot</button>
+  <br>
+  <canvas id="canvasIp"></canvas>
+  <br>
+  <a id="downloadIp" download="ip_photo.png">Download IP Photo</a>
+
+  <hr>
+
+  <!-- Phone Camera -->
+  <button id="openPhoneCam">Open Phone Camera</button>
+  <br>
+  <video id="phoneVideo" autoplay playsinline></video>
+  <br>
+  <button id="snapPhone">Take Phone Photo</button>
+  <br>
+  <canvas id="canvasPhone"></canvas>
+  <br>
+  <a id="downloadPhone" download="phone_photo.png">Download Phone Photo</a>
+
+  <script>
+    // ===== IP Camera =====
+    const openIpCamBtn = document.getElementById('openIpCam');
+    const ipVideo = document.getElementById('ipVideo');
+    const snapIpBtn = document.getElementById('snapIp');
+    const canvasIp = document.getElementById('canvasIp');
+    const downloadIp = document.getElementById('downloadIp');
+    const ctxIp = canvasIp.getContext('2d');
+
+    const ipCameraUrl = "http://192.168.10.106:8080/video"; // Replace with your IP camera URL
+    const ipSnapshotUrl = "http://192.168.10.106:8080/shot.jpg"; // Snapshot URL
+
+    openIpCamBtn.addEventListener('click', () => {
+      ipVideo.src = ipCameraUrl;
+    });
+
+    snapIpBtn.addEventListener('click', () => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.src = ipSnapshotUrl + "?t=" + new Date().getTime();
+      img.onload = () => {
+        canvasIp.width = img.width;
+        canvasIp.height = img.height;
+        ctxIp.drawImage(img, 0, 0);
+        downloadIp.href = canvasIp.toDataURL('image/png');
+      };
+    });
+
+    // ===== Phone Camera =====
+    const openPhoneCamBtn = document.getElementById('openPhoneCam');
+    const phoneVideo = document.getElementById('phoneVideo');
+    const snapPhoneBtn = document.getElementById('snapPhone');
+    const canvasPhone = document.getElementById('canvasPhone');
+    const downloadPhone = document.getElementById('downloadPhone');
+    const ctxPhone = canvasPhone.getContext('2d');
+
+    openPhoneCamBtn.addEventListener('click', async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" },
+          audio: false
+        });
+        phoneVideo.srcObject = stream;
+      } catch (err) {
+        alert("Cannot access phone camera: " + err);
+      }
+    });
+
+    snapPhoneBtn.addEventListener('click', () => {
+      canvasPhone.width = phoneVideo.videoWidth;
+      canvasPhone.height = phoneVideo.videoHeight;
+      ctxPhone.drawImage(phoneVideo, 0, 0);
+      downloadPhone.href = canvasPhone.toDataURL('image/png');
+    });
+  </script>
+</body>
+</html>
